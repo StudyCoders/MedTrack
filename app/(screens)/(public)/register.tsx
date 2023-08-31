@@ -12,38 +12,87 @@ import {
   FormControlErrorIcon,
   AlertCircleIcon,
   FormControlErrorText,
+  Toast,
+  ToastDescription,
+  useToast,
 } from "@gluestack-ui/themed";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
+import { useRouter } from "expo-router";
+import maskCpf from "../../utilities/masks/cpfMask";
 
 import FormHeader from "../../components/form/FormHeader";
 
-interface RegisterProps {
-  nome_completo: string;
-  email: string;
-  cpf: string;
-  senha: string;
-  senha_confirmacao: string;
-}
+const registerSchema = yup
+  .object()
+  .shape({
+    nome_completo: yup.string().required("O nome completo é obrigatório"),
+    email: yup
+      .string()
+      .required("O e-mail é obrigatório")
+      .email("Digite um e-mail válido"),
+    cpf: yup
+      .string()
+      .required("O CPF é obrigatório")
+      .length(14, "O CPF está incompleto"),
+    senha: yup
+      .string()
+      .required("A senha é obrigatória")
+      .min(6, "A senha deve conter no mínimo 6 dígitos"),
+    senha_confirmacao: yup
+      .string()
+      .required("A senha de confirmação é obrigatória")
+      .oneOf([yup.ref("senha")], "As senhas não conferem"),
+  })
+  .required();
 
 export default function register() {
   const {
     handleSubmit,
-    getFieldState,
-    getValues,
     control,
     formState: { errors },
-  } = useForm<RegisterProps>();
+  } = useForm({
+    resolver: yupResolver(registerSchema),
+  });
 
-  const onSubmit = (data: RegisterProps) => {
-    const url = "https://tecnoatualizados.com/projetos/tcc/api/metodos/cadastrar.php";
+  const toast = useToast();
+  const router = useRouter();
+
+  const onSubmit = (data: any) => {
+    const url =
+      "https://tecnoatualizados.com/projetos/tcc/api/metodos/cadastrar.php";
 
     const criarUsuario = async () => {
       try {
         const response = await axios.post(url, JSON.stringify(data));
-        console.log(response.data);
-      } catch (error) {
-        console.log(error);
+
+        if (response.status === 200) {
+          router.push({
+            pathname: "login",
+            params: {
+              msg: "Conta criada com sucesso!",
+              action: "success",
+            },
+          });
+        }
+      } catch (error: any) {
+        const { data } = error.response;
+        const errorMessage = data.error;
+
+        toast.show({
+          placement: "top",
+          render: ({ id }) => {
+            return (
+              <Toast nativeID={id} action="error" variant="accent">
+                <VStack space="xs">
+                  <ToastDescription>{errorMessage}</ToastDescription>
+                </VStack>
+              </Toast>
+            );
+          },
+        });
       }
     };
 
@@ -61,7 +110,7 @@ export default function register() {
       <VStack space="lg">
         <FormHeader title="Criar conta" />
         <Box>
-          <FormControl isInvalid={getFieldState("nome_completo").invalid}>
+          <FormControl isRequired isInvalid={"nome_completo" in errors}>
             <FormControlLabel>
               <FormControlLabelText>Nome Completo</FormControlLabelText>
             </FormControlLabel>
@@ -69,9 +118,6 @@ export default function register() {
               <Controller
                 control={control}
                 name="nome_completo"
-                rules={{
-                  required: "O nome completo é obrigatório",
-                }}
                 render={({ field: { onChange, onBlur } }) => (
                   <InputField
                     type="text"
@@ -85,13 +131,13 @@ export default function register() {
             <FormControlError>
               <FormControlErrorIcon as={AlertCircleIcon} />
               <FormControlErrorText>
-                {getFieldState("nome_completo").error?.message}
+                {errors.nome_completo?.message}
               </FormControlErrorText>
             </FormControlError>
           </FormControl>
         </Box>
         <Box>
-          <FormControl isInvalid={getFieldState("email").invalid}>
+          <FormControl isRequired isInvalid={"email" in errors}>
             <FormControlLabel>
               <FormControlLabelText>E-mail</FormControlLabelText>
             </FormControlLabel>
@@ -99,9 +145,6 @@ export default function register() {
               <Controller
                 control={control}
                 name="email"
-                rules={{
-                  required: "O e-mail é obrigatório",
-                }}
                 render={({ field: { onChange, onBlur } }) => (
                   <InputField
                     type="text"
@@ -115,13 +158,13 @@ export default function register() {
             <FormControlError>
               <FormControlErrorIcon as={AlertCircleIcon} />
               <FormControlErrorText>
-                {getFieldState("email").error?.message}
+                {errors.email?.message}
               </FormControlErrorText>
             </FormControlError>
           </FormControl>
         </Box>
         <Box>
-          <FormControl isInvalid={getFieldState("cpf").invalid}>
+          <FormControl isRequired isInvalid={"cpf" in errors}>
             <FormControlLabel>
               <FormControlLabelText>CPF</FormControlLabelText>
             </FormControlLabel>
@@ -129,29 +172,26 @@ export default function register() {
               <Controller
                 control={control}
                 name="cpf"
-                rules={{
-                  required: "O CPF é obrigatório",
-                }}
-                render={({ field: { onChange, onBlur } }) => (
+                defaultValue={""}
+                render={({ field: { onChange, value } }) => (
                   <InputField
                     type="text"
                     placeholder="Digite seu CPF"
-                    onChangeText={onChange}
-                    onBlur={onBlur}
+                    maxLength={14}
+                    value={value}
+                    onChangeText={(text) => onChange(maskCpf(text))}
                   />
                 )}
               />
             </Input>
             <FormControlError>
               <FormControlErrorIcon as={AlertCircleIcon} />
-              <FormControlErrorText>
-                {getFieldState("cpf").error?.message}
-              </FormControlErrorText>
+              <FormControlErrorText>{errors.cpf?.message}</FormControlErrorText>
             </FormControlError>
           </FormControl>
         </Box>
         <Box>
-          <FormControl isInvalid={getFieldState("senha").invalid}>
+          <FormControl isRequired isInvalid={"senha" in errors}>
             <FormControlLabel>
               <FormControlLabelText>Senha</FormControlLabelText>
             </FormControlLabel>
@@ -179,13 +219,13 @@ export default function register() {
             <FormControlError>
               <FormControlErrorIcon as={AlertCircleIcon} />
               <FormControlErrorText>
-                {getFieldState("senha").error?.message}
+                {errors.senha?.message}
               </FormControlErrorText>
             </FormControlError>
           </FormControl>
         </Box>
         <Box>
-          <FormControl isInvalid={getFieldState("senha_confirmacao").invalid}>
+          <FormControl isInvalid={"senha_confirmacao" in errors}>
             <FormControlLabel>
               <FormControlLabelText>Confirmar senha</FormControlLabelText>
             </FormControlLabel>
@@ -193,14 +233,6 @@ export default function register() {
               <Controller
                 control={control}
                 name="senha_confirmacao"
-                rules={{
-                  required: "Digite a senha de confirmação",
-                  validate: (value) => {
-                    return (
-                      value === getValues("senha") || "As senhas não conferem"
-                    );
-                  },
-                }}
                 render={({ field: { onChange, onBlur } }) => (
                   <InputField
                     type="password"
@@ -214,7 +246,7 @@ export default function register() {
             <FormControlError>
               <FormControlErrorIcon as={AlertCircleIcon} />
               <FormControlErrorText>
-                {getFieldState("senha_confirmacao").error?.message}
+                {errors.senha_confirmacao?.message}
               </FormControlErrorText>
             </FormControlError>
           </FormControl>
