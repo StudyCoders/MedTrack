@@ -24,6 +24,7 @@ import { useRouter } from "expo-router";
 import maskCpf from "../../utilities/masks/cpfMask";
 
 import FormHeader from "../../components/form/FormHeader";
+import { useAuth } from "../../context/AuthContext";
 
 const registerSchema = yup
   .object()
@@ -59,38 +60,36 @@ export default function register() {
 
   const toast = useToast();
   const router = useRouter();
+  const { onRegister } = useAuth();
 
   const onSubmit = (data: any) => {
     const url =
       "https://tecnoatualizados.com/projetos/tcc/api/metodos/cadastrar.php";
 
     const criarUsuario = async () => {
-      try {
-        const response = await axios.post(url, JSON.stringify(data));
+      if (onRegister) {
+        const result: any = await onRegister(data);
 
-        if (response.status === 200) {
-          router.push({
-            pathname: "login",
-            params: {
-              msg: "Conta criada com sucesso!",
-              action: "success",
+        if (result.error) {
+          return toast.show({
+            placement: "top",
+            render: ({ id }) => {
+              return (
+                <Toast nativeID={id} action="error" variant="accent">
+                  <VStack space="xs">
+                    <ToastDescription>{result.msg}</ToastDescription>
+                  </VStack>
+                </Toast>
+              );
             },
           });
         }
-      } catch (error: any) {
-        const { data } = error.response;
-        const errorMessage = data.error;
 
-        toast.show({
-          placement: "top",
-          render: ({ id }) => {
-            return (
-              <Toast nativeID={id} action="error" variant="accent">
-                <VStack space="xs">
-                  <ToastDescription>{errorMessage}</ToastDescription>
-                </VStack>
-              </Toast>
-            );
+        router.push({
+          pathname: "login",
+          params: {
+            msg: "Conta criada com sucesso!",
+            action: "success",
           },
         });
       }

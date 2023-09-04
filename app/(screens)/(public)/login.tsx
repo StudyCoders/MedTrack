@@ -21,10 +21,10 @@ import {
 import FormHeader from "../../components/form/FormHeader";
 import { Link, useRouter, useLocalSearchParams } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
-import axios from "axios";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 const loginSchema = yup
   .object()
@@ -50,9 +50,29 @@ export default function Login() {
   });
   const router = useRouter();
   const toast = useToast();
+  const { onLogin } = useAuth();
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const onSubmit = async (data: any) => {
+    if (onLogin) {
+      const result: any = await onLogin(data);
+
+      if (result.error) {
+        return toast.show({
+          placement: "top",
+          render: ({ id }) => {
+            return (
+              <Toast nativeID={id} action="error" variant="accent">
+                <VStack space="xs">
+                  <ToastDescription>{result.msg}</ToastDescription>
+                </VStack>
+              </Toast>
+            );
+          },
+        });
+      }
+    } else {
+      router.push("profile");
+    }
   };
 
   const { msg, action } = useLocalSearchParams<{
