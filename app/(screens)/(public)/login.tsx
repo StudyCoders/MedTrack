@@ -169,11 +169,11 @@ export default function Login() {
         </Box>
         <Box>
           <HStack justifyContent="center">
-            <Text size="xs" mr={3}>
+            <Text size="sm" mr={3}>
               Não tem uma conta?
             </Text>
             <Link href="/register" asChild>
-              <Text size="xs" color="$primary500">
+              <Text size="sm" color="$primary500">
                 Crie uma!
               </Text>
             </Link>
