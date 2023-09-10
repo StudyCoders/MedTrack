@@ -15,6 +15,6 @@ export function Layout() {
     return authState?.authenticated ? (
         <Redirect href="profile" />
     ):(
-        <Redirect href="login" />
+        <Redirect href="formulario" />
     )
 }
