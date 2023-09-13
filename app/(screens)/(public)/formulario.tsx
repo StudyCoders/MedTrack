@@ -511,7 +511,9 @@ export default function formulario() {
             </FormControl>
           </Box>
           <Box>
-            <FormControl isRequired={!mostraInputPlano} isInvalid={"ds_plano" in errors}>
+            <FormControl
+            isRequired={!mostraInputPlano}
+            isInvalid={!mostraInputPlano ? "ds_plano" in errors : ""}>
               <FormControlLabel>
                 <FormControlLabelText>Preencha caso tenha escolhido a opção 'OUTROS'</FormControlLabelText>
               </FormControlLabel>
@@ -587,23 +589,33 @@ export default function formulario() {
             </FormControl>
           </Box>
           <Box>
-            <FormControl>
+            <FormControl
+            isRequired={!mostraTextareaAlergia}
+            isInvalid={!mostraTextareaAlergia ? "ds_alergia" in errors : ""}>
               <FormControlLabel>
                 <FormControlLabelText>Preencha caso tenha alguma alergia</FormControlLabelText>
               </FormControlLabel>
               <Textarea isDisabled={mostraTextareaAlergia}>
                 <Controller
                   control={control}
-                  name="alergia"
+                  name="ds_alergia"
                   defaultValue={""}
                   render={({ field: { onChange, value } }) => (
                     <TextareaInput
+                      onChangeText={onChange}
                       id="ds_alergia"
                       placeholder="Digite sua alergia"
                     />
                   )}
                 />
               </Textarea>
+
+              <FormControlError>
+                <FormControlErrorIcon as={AlertCircleIcon} />
+                <FormControlErrorText>
+                  {errors.ds_alergia?.message}
+                </FormControlErrorText>
+              </FormControlError>
             </FormControl>
           </Box>
           <Box>
@@ -652,7 +664,9 @@ export default function formulario() {
             </FormControl>
           </Box>
           <Box>
-            <FormControl isRequired={!mostraTextareaMed} isInvalid={"ds_medicamento" in errors}>
+            <FormControl
+              isRequired={!mostraTextareaMed}
+              isInvalid={!mostraTextareaMed ? "ds_medicamento" in errors : ""}>
               <FormControlLabel>
                 <FormControlLabelText>Preencha caso tome algum medicamento contínuo</FormControlLabelText>
               </FormControlLabel>
@@ -725,23 +739,34 @@ export default function formulario() {
             </FormControl>
           </Box>
           <Box>
-            <FormControl>
+            <FormControl
+            isRequired={!mostraTextareaCirurgia}
+            isInvalid={!mostraTextareaCirurgia ? "ds_cirurgia" in errors : ""}>
               <FormControlLabel>
                 <FormControlLabelText>Preencha caso já tenha feito alguma cirurgia</FormControlLabelText>
               </FormControlLabel>
-              <Textarea isDisabled={mostraTextareaCirurgia}>
+              <Textarea
+              isDisabled={mostraTextareaCirurgia}>
                 <Controller
                   control={control}
-                  name="cirurgia"
+                  name="ds_cirurgia"
                   defaultValue={""}
                   render={({ field: { onChange, value } }) => (
                     <TextareaInput
-                    id="ds_cirurgia"
+                      onChangeText={onChange}
+                      id="ds_cirurgia"
                       placeholder="Digite sua cirurgia"
                     />
                   )}
                 />
               </Textarea>
+
+              <FormControlError>
+                <FormControlErrorIcon as={AlertCircleIcon} />
+                <FormControlErrorText>
+                  {errors.ds_cirurgia?.message}
+                </FormControlErrorText>
+              </FormControlError>
             </FormControl>
           </Box>
           <Box>
@@ -798,23 +823,33 @@ export default function formulario() {
             </FormControl>
           </Box>
           <Box>
-            <FormControl>
+            <FormControl
+            isRequired={!mostraTextareaComorb}
+            isInvalid={!mostraTextareaComorb ? "ds_comorbidade" in errors : ""}>
               <FormControlLabel>
                 <FormControlLabelText>Preencha caso tenha escolhido a opção 'OUTROS'</FormControlLabelText>
               </FormControlLabel>
               <Textarea isDisabled={mostraTextareaComorb}>
                 <Controller
                   control={control}
-                  name="comorbidade"
+                  name="ds_comorbidade"
                   defaultValue={""}
                   render={({ field: { onChange, value } }) => (
                     <TextareaInput
-                    id="ds_comorbidade"
+                      onChangeText={onChange}
+                      id="ds_comorbidade"
                       placeholder="Digite sua comorbidade"
                     />
                   )}
                 />
               </Textarea>
+
+              <FormControlError>
+                <FormControlErrorIcon as={AlertCircleIcon} />
+                <FormControlErrorText>
+                  {errors.ds_comorbidade?.message}
+                </FormControlErrorText>
+              </FormControlError>
             </FormControl>
           </Box>
           <Box>
