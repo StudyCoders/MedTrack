@@ -26,6 +26,15 @@ export default function TabRoutesLayout() {
               ),
             }}
           />
+          <Tabs.Screen
+            name="formulario"
+            options={{
+              title: "Formulário",
+              tabBarIcon: ({ color, size }) => (
+                <MaterialIcons name="app-registration" color={color} size={size} />
+              ),
+            }}
+          />
         </Tabs>
       </AuthProvider>
     </GluestackUIProvider>

@@ -14,8 +14,6 @@ import {
   FormControlErrorIcon,
   AlertCircleIcon,
   FormControlErrorText,
-  Toast,
-  ToastDescription,
   useToast,
   Radio,
   RadioLabel,
@@ -34,12 +32,11 @@ import {
   SelectDragIndicator,
   SelectItem,
   SelectContent,
-  SelectDragIndicatorWrapper
+  SelectDragIndicatorWrapper,
 } from "@gluestack-ui/themed";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm, Controller } from "react-hook-form";
-import axios from "axios";
 import { useRouter } from "expo-router";
 import maskDataNasc from "../../utilities/masks/maskDataNasc";
 
@@ -54,53 +51,42 @@ import { useState } from "react";
 const registerSchema = yup
   .object()
   .shape({
-    data_nascimento: yup.string()
+    data_nascimento: yup
+      .string()
       .required("A data de nascimento é obrigatório")
       .length(10, "Data de nascimento está incompleto"),
-    tp_sexo: yup
-      .string().required("Selecione o gênero"),
+    tp_sexo: yup.string().required("Selecione o gênero"),
     telefone: yup.string().optional(),
-    celular: yup.string()
+    celular: yup
+      .string()
       .required("O celular é obrigatório")
       .length(15, "Celular está incompleto"),
-    estado: yup.string()
-      .required("O estado é obrigatória"),
-    cidade: yup.string()
-      .required("A cidade é obrigatória"),
-    cep: yup.string()
+    estado: yup.string().required("O estado é obrigatória"),
+    cidade: yup.string().required("A cidade é obrigatória"),
+    cep: yup
+      .string()
       .required("O CEP é obrigatório")
       .length(9, "CEP está incompleto"),
-    endereco: yup.string()
-      .required("O endereço é obrigatório"),
-    numero_endereco: yup.string()
+    endereco: yup.string().required("O endereço é obrigatório"),
+    numero_endereco: yup
+      .string()
       .required("O número da residência é obrigatório"),
-    bairro: yup.string()
-      .required("O bairro é obrigatório"),
+    bairro: yup.string().required("O bairro é obrigatório"),
     complemento: yup.string().optional(),
-    plano: yup
-      .string().required("Selecione um plano"),
-    ds_plano: yup
-      .string().required("Digite um plano"),
-    alergia: yup
-      .string().required("Selecione se possui alguma alergia"),
-    ds_alergia: yup
-      .string().required("Digite a alergia"),
-    medicamento: yup
-      .string().required("Selecione se toma algum medicamento"),
-    ds_medicamento: yup
-      .string().required("Digite o medicamento"),
-    cirurgia: yup
-      .string().required("Selecione se já realizou alguma cirurgia"),
-    ds_cirurgia: yup
-      .string().required("Digite a cirurgia"),
-    comorbidade: yup
-      .string().required("Comorbidade é obrigatório"),
-    ds_comorbidade: yup
-      .string().required("Digite a comorbidade"),
+    plano: yup.string().required("Selecione um plano"),
+    ds_plano: yup.string().required("Digite um plano"),
+    alergia: yup.string().required("Selecione se possui alguma alergia"),
+    ds_alergia: yup.string().required("Digite a alergia"),
+    medicamento: yup.string().required("Selecione se toma algum medicamento"),
+    ds_medicamento: yup.string().required("Digite o medicamento"),
+    cirurgia: yup.string().required("Selecione se já realizou alguma cirurgia"),
+    ds_cirurgia: yup.string().required("Digite a cirurgia"),
+    comorbidade: yup.string().required("Comorbidade é obrigatório"),
+    ds_comorbidade: yup.string().required("Digite a comorbidade"),
   })
   .required();
 
-export default function formulario() {
+export default function FormUsuario() {
   const {
     handleSubmit,
     control,
@@ -114,8 +100,11 @@ export default function formulario() {
   const { onRegister } = useAuth();
 
   const onSubmit = (data: any) => {
-    const url =
-      "https://tecnoatualizados.com/projetos/tcc/api/metodos/formulario.php";
+    console.log("Conteúdo do formulário...", data);
+
+    /* Enviar o formulário ... */
+
+    /* Após a conclusão redirecionar para a rota [] */
   };
 
   const [mostraInputPlano, setMostraInputPlano] = useState(true);
@@ -125,11 +114,7 @@ export default function formulario() {
   const [mostraTextareaComorb, setMostraTextareaComorb] = useState(true);
 
   return (
-    <Box
-      width="100%"
-      alignItems="center"
-      bg="white"
-    >
+    <Box width="100%" alignItems="center" bg="white">
       <ScrollView>
         <VStack space="lg">
           <FormHeader title="Criação de formulário" />
@@ -156,7 +141,9 @@ export default function formulario() {
               </Input>
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
-                <FormControlErrorText>{errors.data_nascimento?.message}</FormControlErrorText>
+                <FormControlErrorText>
+                  {errors.data_nascimento?.message}
+                </FormControlErrorText>
               </FormControlError>
             </FormControl>
           </Box>
@@ -242,23 +229,23 @@ export default function formulario() {
               </Input>
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
-                <FormControlErrorText>{errors.celular?.message}</FormControlErrorText>
+                <FormControlErrorText>
+                  {errors.celular?.message}
+                </FormControlErrorText>
               </FormControlError>
             </FormControl>
           </Box>
           <Box>
             <FormControl isRequired isInvalid={"estado" in errors}>
               <FormControlLabel>
-                <FormControlLabelText>
-                  Estado
-                </FormControlLabelText>
+                <FormControlLabelText>Estado</FormControlLabelText>
               </FormControlLabel>
               <Controller
                 control={control}
                 name="estado"
                 defaultValue={""}
                 render={({ field: { onChange, value } }) => (
-                  <Select onValueChange={onChange} >
+                  <Select onValueChange={onChange}>
                     <SelectTrigger>
                       <SelectInput placeholder="Selecione um estado" />
                       <SelectIcon mr="$3">
@@ -266,14 +253,12 @@ export default function formulario() {
                       </SelectIcon>
                     </SelectTrigger>
                     <SelectPortal>
-
                       <SelectContent>
                         <SelectDragIndicatorWrapper>
                           <SelectDragIndicator />
                         </SelectDragIndicatorWrapper>
                         <SelectItem label="SÃO PAULO" value="SP" />
                       </SelectContent>
-
                     </SelectPortal>
                   </Select>
                 )}
@@ -281,16 +266,16 @@ export default function formulario() {
 
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
-                <FormControlErrorText>{errors.estado?.message}</FormControlErrorText>
+                <FormControlErrorText>
+                  {errors.estado?.message}
+                </FormControlErrorText>
               </FormControlError>
             </FormControl>
           </Box>
           <Box>
             <FormControl isRequired isInvalid={"cidade" in errors}>
               <FormControlLabel>
-                <FormControlLabelText>
-                  Cidade
-                </FormControlLabelText>
+                <FormControlLabelText>Cidade</FormControlLabelText>
               </FormControlLabel>
 
               <Controller
@@ -306,22 +291,22 @@ export default function formulario() {
                       </SelectIcon>
                     </SelectTrigger>
                     <SelectPortal>
-
                       <SelectContent>
                         <SelectDragIndicatorWrapper>
                           <SelectDragIndicator />
                         </SelectDragIndicatorWrapper>
                         <SelectItem label="BAURU" value="1" />
                       </SelectContent>
-
                     </SelectPortal>
                   </Select>
                 )}
               />
-              
+
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
-                <FormControlErrorText>{errors.cidade?.message}</FormControlErrorText>
+                <FormControlErrorText>
+                  {errors.cidade?.message}
+                </FormControlErrorText>
               </FormControlError>
             </FormControl>
           </Box>
@@ -348,7 +333,9 @@ export default function formulario() {
               </Input>
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
-                <FormControlErrorText>{errors.cep?.message}</FormControlErrorText>
+                <FormControlErrorText>
+                  {errors.cep?.message}
+                </FormControlErrorText>
               </FormControlError>
             </FormControl>
           </Box>
@@ -373,12 +360,18 @@ export default function formulario() {
               </Input>
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
-                <FormControlErrorText>{errors.endereco?.message}</FormControlErrorText>
+                <FormControlErrorText>
+                  {errors.endereco?.message}
+                </FormControlErrorText>
               </FormControlError>
             </FormControl>
           </Box>
           <Box>
-            <FormControl w="80%" isRequired isInvalid={"numero_endereco" in errors}>
+            <FormControl
+              w="80%"
+              isRequired
+              isInvalid={"numero_endereco" in errors}
+            >
               <FormControlLabel>
                 <FormControlLabelText>Número</FormControlLabelText>
               </FormControlLabel>
@@ -394,7 +387,9 @@ export default function formulario() {
               </Input>
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
-                <FormControlErrorText>{errors.numero_endereco?.message}</FormControlErrorText>
+                <FormControlErrorText>
+                  {errors.numero_endereco?.message}
+                </FormControlErrorText>
               </FormControlError>
             </FormControl>
           </Box>
@@ -419,7 +414,9 @@ export default function formulario() {
               </Input>
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
-                <FormControlErrorText>{errors.bairro?.message}</FormControlErrorText>
+                <FormControlErrorText>
+                  {errors.bairro?.message}
+                </FormControlErrorText>
               </FormControlError>
             </FormControl>
           </Box>
@@ -457,9 +454,10 @@ export default function formulario() {
                   <RadioGroup
                     onChange={(v) => {
                       onChange(v);
-                      v==5 ? setMostraInputPlano(false) :
-                                setMostraInputPlano(true);
-                                document.getElementById("ds_plano").value = "";
+                      v == 5
+                        ? setMostraInputPlano(false)
+                        : setMostraInputPlano(true);
+                      document.getElementById("ds_plano").value = "";
                     }}
                   >
                     <Radio value="1">
@@ -512,10 +510,13 @@ export default function formulario() {
           </Box>
           <Box>
             <FormControl
-            isRequired={!mostraInputPlano}
-            isInvalid={!mostraInputPlano ? "ds_plano" in errors : ""}>
+              isRequired={!mostraInputPlano}
+              isInvalid={!mostraInputPlano ? "ds_plano" in errors : ""}
+            >
               <FormControlLabel>
-                <FormControlLabelText>Preencha caso tenha escolhido a opção 'OUTROS'</FormControlLabelText>
+                <FormControlLabelText>
+                  Preencha caso tenha escolhido a opção 'OUTROS'
+                </FormControlLabelText>
               </FormControlLabel>
               <Input isDisabled={mostraInputPlano}>
                 <Controller
@@ -544,9 +545,11 @@ export default function formulario() {
           <Box>
             <FormControl isRequired isInvalid={"alergia" in errors}>
               <FormControlLabel>
-                <FormControlLabelText>Pussui algum tipo de alergia?</FormControlLabelText>
+                <FormControlLabelText>
+                  Pussui algum tipo de alergia?
+                </FormControlLabelText>
               </FormControlLabel>
-              
+
               <Controller
                 control={control}
                 name="alergia"
@@ -554,7 +557,8 @@ export default function formulario() {
                 render={({ field: { onChange, value } }) => (
                   <RadioGroup onChange={onChange}>
                     <HStack space="2xl">
-                      <Radio value="S"
+                      <Radio
+                        value="S"
                         onFocus={(e) => {
                           setMostraTextareaAlergia(false);
                         }}
@@ -564,12 +568,13 @@ export default function formulario() {
                         </RadioIndicator>
                         <RadioLabel>Sim</RadioLabel>
                       </Radio>
-                      <Radio value="N"
+                      <Radio
+                        value="N"
                         onFocus={() => {
                           setMostraTextareaAlergia(true);
                           document.getElementById("ds_alergia").value = "";
                         }}
-                        >
+                      >
                         <RadioIndicator mr="$2">
                           <RadioIcon as={CircleIcon} />
                         </RadioIndicator>
@@ -579,7 +584,7 @@ export default function formulario() {
                   </RadioGroup>
                 )}
               />
-              
+
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
                 <FormControlErrorText>
@@ -590,10 +595,13 @@ export default function formulario() {
           </Box>
           <Box>
             <FormControl
-            isRequired={!mostraTextareaAlergia}
-            isInvalid={!mostraTextareaAlergia ? "ds_alergia" in errors : ""}>
+              isRequired={!mostraTextareaAlergia}
+              isInvalid={!mostraTextareaAlergia ? "ds_alergia" in errors : ""}
+            >
               <FormControlLabel>
-                <FormControlLabelText>Preencha caso tenha alguma alergia</FormControlLabelText>
+                <FormControlLabelText>
+                  Preencha caso tenha alguma alergia
+                </FormControlLabelText>
               </FormControlLabel>
               <Textarea isDisabled={mostraTextareaAlergia}>
                 <Controller
@@ -621,7 +629,9 @@ export default function formulario() {
           <Box>
             <FormControl isRequired isInvalid={"medicamento" in errors}>
               <FormControlLabel>
-                <FormControlLabelText>Toma algum medicamento contínuo?</FormControlLabelText>
+                <FormControlLabelText>
+                  Toma algum medicamento contínuo?
+                </FormControlLabelText>
               </FormControlLabel>
 
               <Controller
@@ -631,7 +641,8 @@ export default function formulario() {
                 render={({ field: { onChange, value } }) => (
                   <RadioGroup onChange={onChange}>
                     <HStack space="2xl">
-                      <Radio value="S"
+                      <Radio
+                        value="S"
                         onFocus={() => setMostraTextareaMed(false)}
                       >
                         <RadioIndicator mr="$2">
@@ -639,7 +650,8 @@ export default function formulario() {
                         </RadioIndicator>
                         <RadioLabel>Sim</RadioLabel>
                       </Radio>
-                      <Radio value="N"
+                      <Radio
+                        value="N"
                         onFocus={() => {
                           setMostraTextareaMed(true);
                           document.getElementById("ds_medicamento").value = "";
@@ -654,7 +666,7 @@ export default function formulario() {
                   </RadioGroup>
                 )}
               />
-              
+
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
                 <FormControlErrorText>
@@ -666,9 +678,12 @@ export default function formulario() {
           <Box>
             <FormControl
               isRequired={!mostraTextareaMed}
-              isInvalid={!mostraTextareaMed ? "ds_medicamento" in errors : ""}>
+              isInvalid={!mostraTextareaMed ? "ds_medicamento" in errors : ""}
+            >
               <FormControlLabel>
-                <FormControlLabelText>Preencha caso tome algum medicamento contínuo</FormControlLabelText>
+                <FormControlLabelText>
+                  Preencha caso tome algum medicamento contínuo
+                </FormControlLabelText>
               </FormControlLabel>
               <Textarea isDisabled={mostraTextareaMed}>
                 <Controller
@@ -696,7 +711,9 @@ export default function formulario() {
           <Box>
             <FormControl isRequired isInvalid={"cirurgia" in errors}>
               <FormControlLabel>
-                <FormControlLabelText>Já realizou alguma cirurgia?</FormControlLabelText>
+                <FormControlLabelText>
+                  Já realizou alguma cirurgia?
+                </FormControlLabelText>
               </FormControlLabel>
 
               <Controller
@@ -706,15 +723,19 @@ export default function formulario() {
                 render={({ field: { onChange, value } }) => (
                   <RadioGroup onChange={onChange}>
                     <HStack space="2xl">
-                      <Radio value="S"
-                        onFocus={() => {setMostraTextareaCirurgia(false)}}
+                      <Radio
+                        value="S"
+                        onFocus={() => {
+                          setMostraTextareaCirurgia(false);
+                        }}
                       >
                         <RadioIndicator mr="$2">
                           <RadioIcon as={CircleIcon} />
                         </RadioIndicator>
                         <RadioLabel>Sim</RadioLabel>
                       </Radio>
-                      <Radio value="N"
+                      <Radio
+                        value="N"
                         onFocus={() => {
                           setMostraTextareaCirurgia(true);
                           document.getElementById("ds_cirurgia").value = "";
@@ -729,7 +750,7 @@ export default function formulario() {
                   </RadioGroup>
                 )}
               />
-              
+
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
                 <FormControlErrorText>
@@ -740,13 +761,15 @@ export default function formulario() {
           </Box>
           <Box>
             <FormControl
-            isRequired={!mostraTextareaCirurgia}
-            isInvalid={!mostraTextareaCirurgia ? "ds_cirurgia" in errors : ""}>
+              isRequired={!mostraTextareaCirurgia}
+              isInvalid={!mostraTextareaCirurgia ? "ds_cirurgia" in errors : ""}
+            >
               <FormControlLabel>
-                <FormControlLabelText>Preencha caso já tenha feito alguma cirurgia</FormControlLabelText>
+                <FormControlLabelText>
+                  Preencha caso já tenha feito alguma cirurgia
+                </FormControlLabelText>
               </FormControlLabel>
-              <Textarea
-              isDisabled={mostraTextareaCirurgia}>
+              <Textarea isDisabled={mostraTextareaCirurgia}>
                 <Controller
                   control={control}
                   name="ds_cirurgia"
@@ -772,9 +795,7 @@ export default function formulario() {
           <Box>
             <FormControl isRequired isInvalid={"comorbidade" in errors}>
               <FormControlLabel>
-                <FormControlLabelText>
-                  Comorbidade
-                </FormControlLabelText>
+                <FormControlLabelText>Comorbidade</FormControlLabelText>
               </FormControlLabel>
 
               <Controller
@@ -786,9 +807,10 @@ export default function formulario() {
                     //onValueChange={onChange}
                     onValueChange={(v) => {
                       onChange(v);
-                      v==21 ? setMostraTextareaComorb(false) :
-                              setMostraTextareaComorb(true);
-                              document.getElementById("ds_comorbidade").value = "";
+                      v == 21
+                        ? setMostraTextareaComorb(false)
+                        : setMostraTextareaComorb(true);
+                      document.getElementById("ds_comorbidade").value = "";
                     }}
                   >
                     <SelectTrigger>
@@ -798,19 +820,23 @@ export default function formulario() {
                       </SelectIcon>
                     </SelectTrigger>
                     <SelectPortal>
-
                       <SelectContent>
                         <SelectDragIndicatorWrapper>
                           <SelectDragIndicator />
                         </SelectDragIndicatorWrapper>
                         <SelectItem label="ARRITMIAS CARDÍACAS" value="1" />
-                        <SelectItem label="CARDIOPATIA HIPERTENSIVA" value="2" />
-                        <SelectItem label="CARDIOPATIAS CONGÊNITAS NO ADULTO" value="3" />
+                        <SelectItem
+                          label="CARDIOPATIA HIPERTENSIVA"
+                          value="2"
+                        />
+                        <SelectItem
+                          label="CARDIOPATIAS CONGÊNITAS NO ADULTO"
+                          value="3"
+                        />
                         <SelectItem label="SÍNDROME DE DOWN" value="20" />
                         <SelectItem label="OUTROS" value="21" />
                         <SelectItem label="NÃO TENHO" value="22" />
                       </SelectContent>
-
                     </SelectPortal>
                   </Select>
                 )}
@@ -818,16 +844,23 @@ export default function formulario() {
 
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
-                <FormControlErrorText>{errors.comorbidade?.message}</FormControlErrorText>
+                <FormControlErrorText>
+                  {errors.comorbidade?.message}
+                </FormControlErrorText>
               </FormControlError>
             </FormControl>
           </Box>
           <Box>
             <FormControl
-            isRequired={!mostraTextareaComorb}
-            isInvalid={!mostraTextareaComorb ? "ds_comorbidade" in errors : ""}>
+              isRequired={!mostraTextareaComorb}
+              isInvalid={
+                !mostraTextareaComorb ? "ds_comorbidade" in errors : ""
+              }
+            >
               <FormControlLabel>
-                <FormControlLabelText>Preencha caso tenha escolhido a opção 'OUTROS'</FormControlLabelText>
+                <FormControlLabelText>
+                  Preencha caso tenha escolhido a opção 'OUTROS'
+                </FormControlLabelText>
               </FormControlLabel>
               <Textarea isDisabled={mostraTextareaComorb}>
                 <Controller
