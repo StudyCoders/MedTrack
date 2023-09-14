@@ -25,6 +25,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
+import jwt_decode from "jwt-decode";
 
 const loginSchema = yup
   .object()
@@ -55,7 +56,7 @@ export default function Login() {
   const onSubmit = async (data: any) => {
     if (onLogin) {
       const result: any = await onLogin(data);
-
+      console.log(result);
       if (result.error) {
         return toast.show({
           placement: "top",
@@ -69,9 +70,16 @@ export default function Login() {
             );
           },
         });
+      } else {
+        let token = result["data"].token;
+        let decodedToken: any = jwt_decode(token);
+        let existeForm = decodedToken.existe_form;
+        if (existeForm) {
+          router.replace("profile");
+        } else {
+          router.replace("formulario");
+        }
       }
-    } else {
-      router.push("profile");
     }
   };
 

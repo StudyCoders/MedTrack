@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface AuthProps {
@@ -14,8 +14,7 @@ interface AuthStatePropos {
   authenticated: boolean | null;
 }
 
-const TOKEN_KEY = "my-jwt";
-export const API_URL = "https://tecnoatualizados.com/projetos/tcc/api/metodos";
+const TOKEN_KEY = "token";
 const AuthContext = createContext<AuthProps>({});
 
 export const useAuth = () => {
@@ -33,7 +32,7 @@ export const AuthProvider = ({ children }: any) => {
       const token = await AsyncStorage.getItem(TOKEN_KEY);
 
       if (token) {
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
         setAuthState({
           token: token,
@@ -47,17 +46,14 @@ export const AuthProvider = ({ children }: any) => {
 
   const login = async (data: any) => {
     try {
-      const response = await axios.post(
-        `${API_URL}/logar.php`,
-        JSON.stringify(data)
-      );
+      const response = await api.post("/logar.php", JSON.stringify(data));
 
       setAuthState({
         token: response.data.token,
         authenticated: true,
       });
 
-      axios.defaults.headers.common[
+      api.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${response.data.token}`;
 
@@ -71,11 +67,13 @@ export const AuthProvider = ({ children }: any) => {
 
   const register = async (data: any) => {
     const headers = {
-      'Content-Type': 'application/json',
-    }
+      "Content-Type": "application/json",
+    };
 
     try {
-      return await axios.post(`${API_URL}/cadastrar.php`, JSON.stringify(data), { headers });
+      return await api.post("/cadastrar.php", JSON.stringify(data), {
+        headers,
+      });
     } catch (e) {
       return { error: true, msg: (e as any).response.data.erro };
     }
@@ -83,11 +81,11 @@ export const AuthProvider = ({ children }: any) => {
 
   const logout = async () => {
     try {
-      const response = await axios.get(`${API_URL}/logar.php`);
+      const response = await api.get("/logout.php");
 
       await AsyncStorage.removeItem(TOKEN_KEY);
 
-      axios.defaults.headers.common["Authorization"] = "";
+      api.defaults.headers.common["Authorization"] = "";
 
       setAuthState({
         token: null,
