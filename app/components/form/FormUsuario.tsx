@@ -46,7 +46,15 @@ import maskTelefone from "../../utilities/masks/telefoneMask";
 import maskCelular from "../../utilities/masks/celularMask";
 import maskCep from "../../utilities/masks/cepMask";
 import { ScrollView } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "../../api/axios";
+import axios from "axios";
+
+export interface SelectProps {
+  label: string;
+  value: string;
+}
 
 const registerSchema = yup
   .object()
@@ -97,7 +105,30 @@ export default function FormUsuario() {
 
   const toast = useToast();
   const router = useRouter();
-  const { onRegister } = useAuth();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+
+        const { data } = await api.get<any>("/retorno-select.php", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const { cidade, comorbidade, planoSaude } = data;
+
+        setCidades(cidade);
+        setComorbidades(comorbidade);
+        setPlanos(planoSaude);
+      } catch (error) {
+        console.error("Erro ao buscar dados das APIs:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const onSubmit = (data: any) => {
     console.log("Conteúdo do formulário...", data);
@@ -112,6 +143,14 @@ export default function FormUsuario() {
   const [mostraTextareaMed, setMostraTextareaMed] = useState(true);
   const [mostraTextareaCirurgia, setMostraTextareaCirurgia] = useState(true);
   const [mostraTextareaComorb, setMostraTextareaComorb] = useState(true);
+  const [cidades, setCidades] = useState<SelectProps[]>([]);
+  const [comorbidades, setComorbidades] = useState<SelectProps[]>([]);
+  const [planos, setPlanos] = useState<SelectProps[]>([]);
+  const [dsPlanoValue, setDsPlanoValue] = useState("");
+  const [dsAlergiaValue, setDsAlergiaValue] = useState("");
+  const [dsMedicamentoValue, setDsMedicamentoValue] = useState("");
+  const [dsCirurgiaValue, setDsCirurgiaValue] = useState("");
+  const [dsComorbidadeValue, setDsComorbidadeValue] = useState("");
 
   return (
     <Box width="100%" alignItems="center" bg="white">
@@ -295,7 +334,13 @@ export default function FormUsuario() {
                         <SelectDragIndicatorWrapper>
                           <SelectDragIndicator />
                         </SelectDragIndicatorWrapper>
-                        <SelectItem label="BAURU" value="1" />
+                        {cidades.map((option, index) => (
+                          <SelectItem
+                            key={index}
+                            label={option.label}
+                            value={option.value}
+                          />
+                        ))}
                       </SelectContent>
                     </SelectPortal>
                   </Select>
@@ -454,48 +499,22 @@ export default function FormUsuario() {
                   <RadioGroup
                     onChange={(v) => {
                       onChange(v);
-                      v == 5
-                        ? setMostraInputPlano(false)
-                        : setMostraInputPlano(true);
-                      document.getElementById("ds_plano").value = "";
+                      if (v == 8) {
+                        setMostraInputPlano(false);
+                        setDsPlanoValue("");
+                      } else {
+                        setMostraInputPlano(true);
+                      }
                     }}
                   >
-                    <Radio value="1">
-                      <RadioIndicator mr="$2">
-                        <RadioIcon as={CircleIcon} />
-                      </RadioIndicator>
-                      <RadioLabel>AMIL</RadioLabel>
-                    </Radio>
-                    <Radio value="2" mt="$1">
-                      <RadioIndicator mr="$2">
-                        <RadioIcon as={CircleIcon} />
-                      </RadioIndicator>
-                      <RadioLabel>UNIMED</RadioLabel>
-                    </Radio>
-                    <Radio value="3" mt="$1">
-                      <RadioIndicator mr="$2">
-                        <RadioIcon as={CircleIcon} />
-                      </RadioIndicator>
-                      <RadioLabel>GNDI</RadioLabel>
-                    </Radio>
-                    <Radio value="4" mt="$1">
-                      <RadioIndicator mr="$2">
-                        <RadioIcon as={CircleIcon} />
-                      </RadioIndicator>
-                      <RadioLabel>BRADESCO SAÚDE</RadioLabel>
-                    </Radio>
-                    <Radio value="5" mt="$1">
-                      <RadioIndicator mr="$2">
-                        <RadioIcon as={CircleIcon} />
-                      </RadioIndicator>
-                      <RadioLabel>OUTROS</RadioLabel>
-                    </Radio>
-                    <Radio value="6" mt="$1">
-                      <RadioIndicator mr="$2">
-                        <RadioIcon as={CircleIcon} />
-                      </RadioIndicator>
-                      <RadioLabel>NÃO TENHO</RadioLabel>
-                    </Radio>
+                    {planos.map((option, index) => (
+                      <Radio key={index} value={option.value}>
+                        <RadioIndicator mr="$2">
+                          <RadioIcon as={CircleIcon} />
+                        </RadioIndicator>
+                        <RadioLabel>{option.label}</RadioLabel>
+                      </Radio>
+                    ))}
                   </RadioGroup>
                 )}
               />
@@ -525,8 +544,11 @@ export default function FormUsuario() {
                   defaultValue={""}
                   render={({ field: { onChange, value } }) => (
                     <InputField
-                      onChangeText={onChange}
-                      id="ds_plano"
+                      onChangeText={(value) => {
+                        setDsPlanoValue(value);
+                        onChange(value);
+                      }}
+                      value={dsPlanoValue}
                       type="text"
                       placeholder="Digite um plano"
                     />
@@ -572,7 +594,7 @@ export default function FormUsuario() {
                         value="N"
                         onFocus={() => {
                           setMostraTextareaAlergia(true);
-                          document.getElementById("ds_alergia").value = "";
+                          setDsAlergiaValue("");
                         }}
                       >
                         <RadioIndicator mr="$2">
@@ -610,9 +632,12 @@ export default function FormUsuario() {
                   defaultValue={""}
                   render={({ field: { onChange, value } }) => (
                     <TextareaInput
-                      onChangeText={onChange}
-                      id="ds_alergia"
+                      onChangeText={(value) => {
+                        setDsAlergiaValue(value);
+                        onChange(value);
+                      }}
                       placeholder="Digite sua alergia"
+                      value={dsAlergiaValue}
                     />
                   )}
                 />
@@ -654,7 +679,7 @@ export default function FormUsuario() {
                         value="N"
                         onFocus={() => {
                           setMostraTextareaMed(true);
-                          document.getElementById("ds_medicamento").value = "";
+                          setDsMedicamentoValue("");
                         }}
                       >
                         <RadioIndicator mr="$2">
@@ -692,8 +717,11 @@ export default function FormUsuario() {
                   defaultValue={""}
                   render={({ field: { onChange, value } }) => (
                     <TextareaInput
-                      onChangeText={onChange}
-                      id="ds_medicamento"
+                      onChangeText={(value) => {
+                        setDsMedicamentoValue(value);
+                        onChange(value);
+                      }}
+                      value={dsMedicamentoValue}
                       placeholder="Digite seu medicamento"
                     />
                   )}
@@ -738,7 +766,7 @@ export default function FormUsuario() {
                         value="N"
                         onFocus={() => {
                           setMostraTextareaCirurgia(true);
-                          document.getElementById("ds_cirurgia").value = "";
+                          setDsCirurgiaValue("");
                         }}
                       >
                         <RadioIndicator mr="$2">
@@ -776,8 +804,11 @@ export default function FormUsuario() {
                   defaultValue={""}
                   render={({ field: { onChange, value } }) => (
                     <TextareaInput
-                      onChangeText={onChange}
-                      id="ds_cirurgia"
+                      onChangeText={(value) => {
+                        setDsCirurgiaValue(value);
+                        onChange(value);
+                      }}
+                      value={dsCirurgiaValue}
                       placeholder="Digite sua cirurgia"
                     />
                   )}
@@ -804,13 +835,12 @@ export default function FormUsuario() {
                 defaultValue={""}
                 render={({ field: { onChange, value } }) => (
                   <Select
-                    //onValueChange={onChange}
                     onValueChange={(v) => {
                       onChange(v);
                       v == 21
                         ? setMostraTextareaComorb(false)
                         : setMostraTextareaComorb(true);
-                      document.getElementById("ds_comorbidade").value = "";
+                      setDsComorbidadeValue("");
                     }}
                   >
                     <SelectTrigger>
@@ -824,18 +854,13 @@ export default function FormUsuario() {
                         <SelectDragIndicatorWrapper>
                           <SelectDragIndicator />
                         </SelectDragIndicatorWrapper>
-                        <SelectItem label="ARRITMIAS CARDÍACAS" value="1" />
-                        <SelectItem
-                          label="CARDIOPATIA HIPERTENSIVA"
-                          value="2"
-                        />
-                        <SelectItem
-                          label="CARDIOPATIAS CONGÊNITAS NO ADULTO"
-                          value="3"
-                        />
-                        <SelectItem label="SÍNDROME DE DOWN" value="20" />
-                        <SelectItem label="OUTROS" value="21" />
-                        <SelectItem label="NÃO TENHO" value="22" />
+                        {comorbidades.map((option, index) => (
+                          <SelectItem
+                            key={index}
+                            label={option.label}
+                            value={option.value}
+                          />
+                        ))}
                       </SelectContent>
                     </SelectPortal>
                   </Select>
@@ -869,8 +894,11 @@ export default function FormUsuario() {
                   defaultValue={""}
                   render={({ field: { onChange, value } }) => (
                     <TextareaInput
-                      onChangeText={onChange}
-                      id="ds_comorbidade"
+                      onChangeText={(value) => {
+                        setDsComorbidadeValue(value);
+                        onChange(value);
+                      }}
+                      value={dsComorbidadeValue}
                       placeholder="Digite sua comorbidade"
                     />
                   )}
