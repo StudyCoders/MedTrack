@@ -49,7 +49,6 @@ import { ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../api/axios";
-import axios from "axios";
 
 export interface SelectProps {
   label: string;

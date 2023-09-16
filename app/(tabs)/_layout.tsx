@@ -18,20 +18,20 @@ export default function TabRoutesLayout() {
             }}
           />
           <Tabs.Screen
+            name="formulario"
+            options={{
+              title: "Contatos",
+              tabBarIcon: ({ color, size }) => (
+                <MaterialIcons name="account-box" color={color} size={size} />
+              ),
+            }}
+          />
+          <Tabs.Screen
             name="profile"
             options={{
               title: "Perfil",
               tabBarIcon: ({ color, size }) => (
                 <MaterialIcons name="person" color={color} size={size} />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="formulario"
-            options={{
-              title: "Formulário",
-              tabBarIcon: ({ color, size }) => (
-                <MaterialIcons name="app-registration" color={color} size={size} />
               ),
             }}
           />
