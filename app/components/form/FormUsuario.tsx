@@ -14,6 +14,8 @@ import {
   FormControlErrorIcon,
   AlertCircleIcon,
   FormControlErrorText,
+  Toast,
+  ToastDescription,
   useToast,
   Radio,
   RadioLabel,
@@ -36,63 +38,75 @@ import {
 } from "@gluestack-ui/themed";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useForm, Controller } from "react-hook-form";
+import { ScrollView } from "react-native";
 import { useRouter } from "expo-router";
-import maskDataNasc from "../../utilities/masks/maskDataNasc";
-
 import FormHeader from "../../components/form/FormHeader";
-import { useAuth } from "../../context/AuthContext";
+
+import maskDataNasc from "../../utilities/masks/maskDataNasc";
 import maskTelefone from "../../utilities/masks/telefoneMask";
 import maskCelular from "../../utilities/masks/celularMask";
 import maskCep from "../../utilities/masks/cepMask";
-import { ScrollView } from "react-native";
+
 import { useEffect, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../api/axios";
-import axios from "axios";
 
 export interface SelectProps {
   label: string;
   value: string;
 }
 
-const registerSchema = yup
-  .object()
-  .shape({
-    data_nascimento: yup
-      .string()
-      .required("A data de nascimento é obrigatório")
-      .length(10, "Data de nascimento está incompleto"),
-    tp_sexo: yup.string().required("Selecione o gênero"),
-    telefone: yup.string().optional(),
-    celular: yup
-      .string()
-      .required("O celular é obrigatório")
-      .length(15, "Celular está incompleto"),
-    estado: yup.string().required("O estado é obrigatória"),
-    cidade: yup.string().required("A cidade é obrigatória"),
-    cep: yup
-      .string()
-      .required("O CEP é obrigatório")
-      .length(9, "CEP está incompleto"),
-    endereco: yup.string().required("O endereço é obrigatório"),
-    numero_endereco: yup
-      .string()
-      .required("O número da residência é obrigatório"),
-    bairro: yup.string().required("O bairro é obrigatório"),
-    complemento: yup.string().optional(),
-    plano: yup.string().required("Selecione um plano"),
-    ds_plano: yup.string().required("Digite um plano"),
-    alergia: yup.string().required("Selecione se possui alguma alergia"),
-    ds_alergia: yup.string().required("Digite a alergia"),
-    medicamento: yup.string().required("Selecione se toma algum medicamento"),
-    ds_medicamento: yup.string().required("Digite o medicamento"),
-    cirurgia: yup.string().required("Selecione se já realizou alguma cirurgia"),
-    ds_cirurgia: yup.string().required("Digite a cirurgia"),
-    comorbidade: yup.string().required("Comorbidade é obrigatório"),
-    ds_comorbidade: yup.string().required("Digite a comorbidade"),
-  })
-  .required();
+const registerSchema = yup.object().shape({
+  dt_nascimento: yup
+    .string()
+    .required("A data de nascimento é obrigatória")
+    .length(10, "A data de nascimento está incompleta"),
+  tp_sexo: yup.string().required("Selecione o gênero"),
+  telefone: yup.string().optional(),
+  celular: yup
+    .string()
+    .required("O celular é obrigatório")
+    .length(15, "O celular deve ter 15 caracteres"),
+  estado: yup.string().required("O estado é obrigatório"),
+  id_cidade: yup.string().required("A cidade é obrigatória"),
+  cep: yup
+    .string()
+    .required("O CEP é obrigatório")
+    .length(9, "O CEP deve ter 9 caracteres"),
+  endereco: yup.string().required("O endereço é obrigatório"),
+  numero_endereco: yup
+    .string()
+    .required("O número da residência é obrigatório"),
+  bairro: yup.string().required("O bairro é obrigatório"),
+  complemento: yup.string().optional(),
+  id_plano: yup.string().required("Selecione um plano"),
+  ds_plano: yup.string().when("plano", {
+    is: "8",
+    then: (schema) => schema.required("Digite um plano"),
+  }),
+  alergia: yup.string().required("Selecione se possui alguma alergia"),
+  ds_alergia: yup.string().when("alergia", {
+    is: "S",
+    then: (schema) => schema.required("Digite a alergia"),
+  }),
+  med_cont: yup.string().required("Selecione se toma algum medicamento"),
+  ds_med_cont: yup.string().when("medicamento", {
+    is: "S",
+    then: (schema) => schema.required("Digite o medicamento"),
+  }),
+  cirurgia: yup.string().required("Selecione se já realizou alguma cirurgia"),
+  ds_cirurgia: yup.string().when("cirurgia", {
+    is: "S",
+    then: (schema) => schema.required("Digite a cirurgia"),
+  }),
+  id_comorbidade: yup.string().required("Comorbidade é obrigatória"),
+  ds_comorbidade: yup.string().when("comorbidade", {
+    is: "21",
+    then: (schema) => schema.required("Digite a comorbidade"),
+  }),
+});
 
 export default function FormUsuario() {
   const {
@@ -130,12 +144,50 @@ export default function FormUsuario() {
     fetchData();
   }, []);
 
-  const onSubmit = (data: any) => {
-    console.log("Conteúdo do formulário...", data);
+  const onSubmit = async (formData: any) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
 
-    /* Enviar o formulário ... */
+      const { data, status } = await api.post<any>(
+        "/formulario.php",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    /* Após a conclusão redirecionar para a rota [] */
+      if (status == 200) {
+        return toast.show({
+          placement: "top",
+          render: ({ id }) => {
+            return (
+              <Toast nativeID={id} action="success" variant="accent">
+                <VStack space="xs">
+                  <ToastDescription>{data.msg}</ToastDescription>
+                </VStack>
+              </Toast>
+            );
+          },
+        });
+      } else {
+        return toast.show({
+          placement: "top",
+          render: ({ id }) => {
+            return (
+              <Toast nativeID={id} action="success" variant="accent">
+                <VStack space="xs">
+                  <ToastDescription>{data.erro}</ToastDescription>
+                </VStack>
+              </Toast>
+            );
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao buscar dados das APIs:", error);
+    }
   };
 
   const [mostraInputPlano, setMostraInputPlano] = useState(true);
@@ -158,14 +210,14 @@ export default function FormUsuario() {
         <VStack space="lg">
           <FormHeader title="Criação de formulário" />
           <Box>
-            <FormControl isRequired isInvalid={"data_nascimento" in errors}>
+            <FormControl isRequired isInvalid={"dt_nascimento" in errors}>
               <FormControlLabel>
                 <FormControlLabelText>Data de nascimento</FormControlLabelText>
               </FormControlLabel>
               <Input>
                 <Controller
                   control={control}
-                  name="data_nascimento"
+                  name="dt_nascimento"
                   defaultValue={""}
                   render={({ field: { onChange, value } }) => (
                     <InputField
@@ -181,7 +233,7 @@ export default function FormUsuario() {
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
                 <FormControlErrorText>
-                  {errors.data_nascimento?.message}
+                  {errors.dt_nascimento?.message}
                 </FormControlErrorText>
               </FormControlError>
             </FormControl>
@@ -312,14 +364,14 @@ export default function FormUsuario() {
             </FormControl>
           </Box>
           <Box>
-            <FormControl isRequired isInvalid={"cidade" in errors}>
+            <FormControl isRequired isInvalid={"id_cidade" in errors}>
               <FormControlLabel>
                 <FormControlLabelText>Cidade</FormControlLabelText>
               </FormControlLabel>
 
               <Controller
                 control={control}
-                name="cidade"
+                name="id_cidade"
                 defaultValue={""}
                 render={({ field: { onChange, value } }) => (
                   <Select onValueChange={onChange}>
@@ -350,7 +402,7 @@ export default function FormUsuario() {
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
                 <FormControlErrorText>
-                  {errors.cidade?.message}
+                  {errors.id_cidade?.message}
                 </FormControlErrorText>
               </FormControlError>
             </FormControl>
@@ -479,6 +531,7 @@ export default function FormUsuario() {
                     <InputField
                       type="text"
                       placeholder="Digite um complemento"
+                      onChangeText={onChange}
                     />
                   )}
                 />
@@ -486,14 +539,14 @@ export default function FormUsuario() {
             </FormControl>
           </Box>
           <Box>
-            <FormControl isRequired isInvalid={"plano" in errors}>
+            <FormControl isRequired isInvalid={"id_plano" in errors}>
               <FormControlLabel>
                 <FormControlLabelText>Plano de saúde</FormControlLabelText>
               </FormControlLabel>
 
               <Controller
                 control={control}
-                name="plano"
+                name="id_plano"
                 defaultValue={""}
                 render={({ field: { onChange, value } }) => (
                   <RadioGroup
@@ -522,7 +575,7 @@ export default function FormUsuario() {
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
                 <FormControlErrorText>
-                  {errors.plano?.message}
+                  {errors.id_plano?.message}
                 </FormControlErrorText>
               </FormControlError>
             </FormControl>
@@ -530,7 +583,7 @@ export default function FormUsuario() {
           <Box>
             <FormControl
               isRequired={!mostraInputPlano}
-              isInvalid={!mostraInputPlano ? "ds_plano" in errors : ""}
+              isInvalid={!mostraInputPlano ? "ds_plano" in errors : undefined}
             >
               <FormControlLabel>
                 <FormControlLabelText>
@@ -618,7 +671,9 @@ export default function FormUsuario() {
           <Box>
             <FormControl
               isRequired={!mostraTextareaAlergia}
-              isInvalid={!mostraTextareaAlergia ? "ds_alergia" in errors : ""}
+              isInvalid={
+                !mostraTextareaAlergia ? "ds_alergia" in errors : undefined
+              }
             >
               <FormControlLabel>
                 <FormControlLabelText>
@@ -652,7 +707,7 @@ export default function FormUsuario() {
             </FormControl>
           </Box>
           <Box>
-            <FormControl isRequired isInvalid={"medicamento" in errors}>
+            <FormControl isRequired isInvalid={"med_cont" in errors}>
               <FormControlLabel>
                 <FormControlLabelText>
                   Toma algum medicamento contínuo?
@@ -661,7 +716,7 @@ export default function FormUsuario() {
 
               <Controller
                 control={control}
-                name="medicamento"
+                name="med_cont"
                 defaultValue={""}
                 render={({ field: { onChange, value } }) => (
                   <RadioGroup onChange={onChange}>
@@ -695,7 +750,7 @@ export default function FormUsuario() {
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
                 <FormControlErrorText>
-                  {errors.medicamento?.message}
+                  {errors.med_cont?.message}
                 </FormControlErrorText>
               </FormControlError>
             </FormControl>
@@ -703,7 +758,9 @@ export default function FormUsuario() {
           <Box>
             <FormControl
               isRequired={!mostraTextareaMed}
-              isInvalid={!mostraTextareaMed ? "ds_medicamento" in errors : ""}
+              isInvalid={
+                !mostraTextareaMed ? "ds_med_cont" in errors : undefined
+              }
             >
               <FormControlLabel>
                 <FormControlLabelText>
@@ -713,7 +770,7 @@ export default function FormUsuario() {
               <Textarea isDisabled={mostraTextareaMed}>
                 <Controller
                   control={control}
-                  name="ds_medicamento"
+                  name="ds_med_cont"
                   defaultValue={""}
                   render={({ field: { onChange, value } }) => (
                     <TextareaInput
@@ -731,7 +788,7 @@ export default function FormUsuario() {
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
                 <FormControlErrorText>
-                  {errors.ds_medicamento?.message}
+                  {errors.ds_med_cont?.message}
                 </FormControlErrorText>
               </FormControlError>
             </FormControl>
@@ -790,7 +847,9 @@ export default function FormUsuario() {
           <Box>
             <FormControl
               isRequired={!mostraTextareaCirurgia}
-              isInvalid={!mostraTextareaCirurgia ? "ds_cirurgia" in errors : ""}
+              isInvalid={
+                !mostraTextareaCirurgia ? "ds_cirurgia" in errors : undefined
+              }
             >
               <FormControlLabel>
                 <FormControlLabelText>
@@ -824,20 +883,20 @@ export default function FormUsuario() {
             </FormControl>
           </Box>
           <Box>
-            <FormControl isRequired isInvalid={"comorbidade" in errors}>
+            <FormControl isRequired isInvalid={"id_comorbidade" in errors}>
               <FormControlLabel>
                 <FormControlLabelText>Comorbidade</FormControlLabelText>
               </FormControlLabel>
 
               <Controller
                 control={control}
-                name="comorbidade"
+                name="id_comorbidade"
                 defaultValue={""}
                 render={({ field: { onChange, value } }) => (
                   <Select
                     onValueChange={(v) => {
                       onChange(v);
-                      v == 21
+                      v == "21"
                         ? setMostraTextareaComorb(false)
                         : setMostraTextareaComorb(true);
                       setDsComorbidadeValue("");
@@ -870,7 +929,7 @@ export default function FormUsuario() {
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
                 <FormControlErrorText>
-                  {errors.comorbidade?.message}
+                  {errors.id_comorbidade?.message}
                 </FormControlErrorText>
               </FormControlError>
             </FormControl>
@@ -879,7 +938,7 @@ export default function FormUsuario() {
             <FormControl
               isRequired={!mostraTextareaComorb}
               isInvalid={
-                !mostraTextareaComorb ? "ds_comorbidade" in errors : ""
+                !mostraTextareaComorb ? "ds_comorbidade" in errors : undefined
               }
             >
               <FormControlLabel>

@@ -85,7 +85,7 @@ export default function Login() {
 
   const { msg, action } = useLocalSearchParams<{
     msg: string;
-    action: string;
+    action: "error" | "warning" | "success" | "info" | "attention";
   }>();
 
   useEffect(() => {

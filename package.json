@@ -9,7 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@gluestack-ui/themed": "^0.1.9",
+    "@gluestack-ui/themed": "^0.1.44",
     "@hookform/resolvers": "^3.3.1",
     "@react-native-async-storage/async-storage": "1.18.2",
     "axios": "^1.5.0",
