@@ -14,5 +14,5 @@ Esta é uma base para o projeto X...
 
 ## Como fazer a instalação do projeto
 1. Clonar o projeto: `git clone https://github.com/...`
-2. Abrir a pasta raiz do projeto `my-app`
+2. Abrir a pasta raiz do projeto `quicksafe-mobile`
 3. Instalar as dependências do projeto; `npm install`
