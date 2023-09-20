@@ -145,6 +145,7 @@ export default function FormUsuario() {
   }, []);
 
   const onSubmit = async (formData: any) => {
+    console.log(formData)
     try {
       const token = await AsyncStorage.getItem("token");
 

@@ -20,7 +20,7 @@ export default function LoginToken() {
           const existeForm = response["data"].data.existe_form;
 
           if (existeForm) {
-            router.replace("profile");
+            router.replace("home");
           } else {
             router.replace("userForm");
           }
