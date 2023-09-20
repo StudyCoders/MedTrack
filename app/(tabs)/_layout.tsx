@@ -9,9 +9,10 @@ export default function TabRoutesLayout() {
       <AuthProvider>
         <Tabs>
           <Tabs.Screen
-            name="index"
+            name="home"
             options={{
               title: "Início",
+              headerShown: false,
               tabBarIcon: ({ color, size }) => (
                 <MaterialIcons name="home" color={color} size={size} />
               ),
@@ -21,6 +22,7 @@ export default function TabRoutesLayout() {
             name="formulario"
             options={{
               title: "Contatos",
+              headerShown: false,
               tabBarIcon: ({ color, size }) => (
                 <MaterialIcons name="account-box" color={color} size={size} />
               ),
@@ -30,6 +32,7 @@ export default function TabRoutesLayout() {
             name="profile"
             options={{
               title: "Perfil",
+              headerShown: false,
               tabBarIcon: ({ color, size }) => (
                 <MaterialIcons name="person" color={color} size={size} />
               ),

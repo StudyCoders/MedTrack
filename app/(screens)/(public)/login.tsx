@@ -37,7 +37,6 @@ const loginSchema = yup
     senha: yup
       .string()
       .required("A senha é obrigatória")
-      .min(6, "A senha deve conter no mínimo 6 dígitos"),
   })
   .required();
 
@@ -75,7 +74,7 @@ export default function Login() {
         let decodedToken: any = jwt_decode(token);
         let existeForm = decodedToken.existe_form;
         if (existeForm) {
-          router.replace("profile");
+          router.replace("home");
         } else {
           router.replace("formulario");
         }

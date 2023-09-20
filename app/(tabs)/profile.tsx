@@ -10,10 +10,34 @@ import {
   VStack,
   useToast,
 } from "@gluestack-ui/themed";
+import FormHeader from "../components/form/FormHeader";
+import { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "../api/axios";
 
 export default function Profile() {
   const { onLogout } = useAuth();
   const toast = useToast();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+
+        const { data } = await api.get<any>("/sessao.php", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setInfos(data.data);
+      } catch (error) {
+        console.error("Erro ao buscar dados das APIs:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const encerrarSessao = async () => {
     if (onLogout) {
@@ -38,14 +62,35 @@ export default function Profile() {
     }
   };
 
+  const [info, setInfos]: any = useState("");
+
   return (
-    <Box padding={5}>
-      <Text>Perfil</Text>
+    <VStack space="lg" bg="white" p={15}>
+      <FormHeader title="QuickSafe" />
+      <Box mb={15}>
+        <Box>
+          <Text size="xl" fontWeight="bold">Nome</Text>
+          <Text size="xl">{info.nome}</Text>
+        </Box>
+        <Box>
+          <Text size="xl" fontWeight="bold">E-mail</Text>
+          <Text size="xl">{info.email}</Text>
+        </Box>
+        <Box>
+          <Text size="xl" fontWeight="bold">CPF</Text>
+          <Text size="xl">{info.cpf}</Text>
+        </Box>
+      </Box>
       <Box>
-        <Button onPress={encerrarSessao}>
+        <Button action="primary">
+          <ButtonText>Acessar formulário</ButtonText>
+        </Button>
+      </Box>        
+      <Box>
+        <Button onPress={encerrarSessao} action="negative">
           <ButtonText>Desconectar</ButtonText>
         </Button>
       </Box>
-    </Box>
+    </VStack>
   );
 }
