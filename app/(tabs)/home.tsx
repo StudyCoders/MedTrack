@@ -9,10 +9,31 @@ import {VStack,
         ButtonText,
         ButtonIcon,
         PhoneIcon
-} from '@gluestack-ui/themed'
+} from '@gluestack-ui/themed';
+import * as Location from 'expo-location';
+import { Linking } from 'react-native';
 
-import { ScrollView } from 'react-native-gesture-handler'
-import FormHeader from '../components/form/FormHeader'
+
+export async function ligar() {
+  const url = 'tel://192';
+
+  let { status, canAskAgain } = await Location.getForegroundPermissionsAsync();
+
+  if (status !== 'granted' && canAskAgain) {
+    const newReq = await Location.requestForegroundPermissionsAsync();
+    if (newReq.status === 'granted') {
+      let location = await Location.getCurrentPositionAsync({});
+      console.log("Localização atual: ", location);
+      Linking.openURL(url);
+    }
+  } else if (status !== 'granted' && !canAskAgain) {
+    Linking.openSettings();
+  } else {
+    let location = await Location.getCurrentPositionAsync({});
+    console.log("Localização atual: ", location);
+    Linking.openURL(url);
+  }
+}
 
 export default function Home() {
   return (
@@ -26,6 +47,7 @@ export default function Home() {
             variant="solid"
             action="negative"
             w={200}
+            onPress={ligar}
           >
             <ButtonText>Ligar </ButtonText>
             <ButtonIcon as={PhoneIcon} />

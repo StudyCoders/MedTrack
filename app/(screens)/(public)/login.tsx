@@ -76,7 +76,7 @@ export default function Login() {
         if (existeForm) {
           router.replace("home");
         } else {
-          router.replace("formulario");
+          router.replace("userForm");
         }
       }
     }

@@ -52,6 +52,7 @@ import { useForm, Controller } from "react-hook-form";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../api/axios";
+import * as Location from 'expo-location';
 
 export interface SelectProps {
   label: string;
@@ -145,7 +146,6 @@ export default function FormUsuario() {
   }, []);
 
   const onSubmit = async (formData: any) => {
-    console.log(formData)
     try {
       const token = await AsyncStorage.getItem("token");
 
@@ -160,18 +160,14 @@ export default function FormUsuario() {
       );
 
       if (status == 200) {
-        return toast.show({
-          placement: "top",
-          render: ({ id }) => {
-            return (
-              <Toast nativeID={id} action="success" variant="accent">
-                <VStack space="xs">
-                  <ToastDescription>{data.msg}</ToastDescription>
-                </VStack>
-              </Toast>
-            );
-          },
-        });
+        let { status } = await Location.getForegroundPermissionsAsync();
+
+        if (status !== 'granted') {
+          await Location.requestForegroundPermissionsAsync();
+        }
+
+        router.replace("home");
+
       } else {
         return toast.show({
           placement: "top",
