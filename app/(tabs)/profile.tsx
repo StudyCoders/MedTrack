@@ -40,11 +40,10 @@ export default function Profile() {
   }, []);
 
   const abrirForm = async () => {
-    router.push( { pathname: "userForm", params: { carregaDados: true }});
+    router.push("userForm");
   }
 
   const encerrarSessao = async () => {
-    router.push("login");
     if (onLogout) {
       const result: any = await onLogout();
 
