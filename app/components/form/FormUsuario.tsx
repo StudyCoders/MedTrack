@@ -242,7 +242,6 @@ export default function FormUsuario() {
                       placeholder="DD/MM/AAAA"
                       maxLength={10}
                       onChangeText={(text) => onChange(maskDataNasc(text))}
-                      defaultValue={info.dt_nascimento}
                     />
                   )}
                 />
