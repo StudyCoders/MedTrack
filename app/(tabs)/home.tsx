@@ -10,6 +10,7 @@ import {
   ButtonText,
   ButtonIcon,
   PhoneIcon,
+  Center,
 } from "@gluestack-ui/themed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
@@ -66,8 +67,8 @@ export async function ligar() {
 
 export default function Home() {
   return (
-    <VStack flex={1} alignItems="center" justifyContent="space-around">
-      <Box>
+    <VStack flex={1}>
+      <Center h="90%">
         <Box alignItems="center" m={15}>
           <Image source={require("../assets/images/logo-sos.png")} />
           <Button
@@ -88,7 +89,7 @@ export default function Home() {
             <AlertText>Ligue somente em caso de emergência</AlertText>
           </Alert>
         </Box>
-      </Box>
+      </Center>
       <Box position="fixed" bottom={65}>
         <Alert mx="$2.5" action="error" variant="outline" bg="#f8d7da">
           <AlertIcon as={InfoIcon} mr="$3" />

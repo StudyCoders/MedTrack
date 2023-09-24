@@ -39,7 +39,12 @@ export default function Profile() {
     fetchData();
   }, []);
 
+  const abrirForm = async () => {
+    router.push( { pathname: "userForm", params: { carregaDados: true }});
+  }
+
   const encerrarSessao = async () => {
+    router.push("login");
     if (onLogout) {
       const result: any = await onLogout();
 
@@ -65,7 +70,7 @@ export default function Profile() {
   const [info, setInfos]: any = useState("");
 
   return (
-    <VStack space="lg" bg="white" p={15}>
+    <VStack space="lg" p={15}>
       <FormHeader title="QuickSafe" />
       <Box mb={15}>
         <Box>
@@ -82,7 +87,7 @@ export default function Profile() {
         </Box>
       </Box>
       <Box>
-        <Button action="primary">
+        <Button onPress={abrirForm} action="primary">
           <ButtonText>Acessar formulário</ButtonText>
         </Button>
       </Box>        

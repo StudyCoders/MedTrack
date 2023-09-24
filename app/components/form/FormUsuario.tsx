@@ -69,7 +69,7 @@ const registerSchema = yup.object().shape({
   celular: yup
     .string()
     .required("O celular é obrigatório")
-    .length(15, "O celular deve ter 15 caracteres"),
+    .length(15, "O celular deve ter 11 dígitos com o DDD"),
   estado: yup.string().required("O estado é obrigatório"),
   id_cidade: yup.string().required("A cidade é obrigatória"),
   cep: yup
@@ -126,7 +126,7 @@ export default function FormUsuario() {
       try {
         const token = await AsyncStorage.getItem("token");
 
-        const { data } = await api.get<any>("/retorno-select.php", {
+        const { data } = await api.get<any>("/retorno.php?acao=select", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -143,6 +143,24 @@ export default function FormUsuario() {
     };
 
     fetchData();
+
+    const fetchDataInfo = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+
+        const { data } = await api.get<any>("/retorno.php?acao=formulario", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setInfos(data);
+      } catch (error) {
+        console.error("Erro ao buscar dados das APIs:", error);
+      }
+    };
+
+    fetchDataInfo();
   }, []);
 
   const onSubmit = async (formData: any) => {
@@ -187,6 +205,8 @@ export default function FormUsuario() {
     }
   };
 
+  const [info, setInfos]: any = useState("");
+
   const [mostraInputPlano, setMostraInputPlano] = useState(true);
   const [mostraTextareaAlergia, setMostraTextareaAlergia] = useState(true);
   const [mostraTextareaMed, setMostraTextareaMed] = useState(true);
@@ -221,8 +241,8 @@ export default function FormUsuario() {
                       type="text"
                       placeholder="DD/MM/AAAA"
                       maxLength={10}
-                      value={value}
                       onChangeText={(text) => onChange(maskDataNasc(text))}
+                      defaultValue={info.dt_nascimento}
                     />
                   )}
                 />

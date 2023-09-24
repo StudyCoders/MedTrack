@@ -19,7 +19,7 @@ export default function TabRoutesLayout() {
             }}
           />
           <Tabs.Screen
-            name="formulario"
+            name="contatos"
             options={{
               title: "Contatos",
               headerShown: false,
