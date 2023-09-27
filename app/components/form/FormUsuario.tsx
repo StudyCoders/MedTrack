@@ -73,9 +73,6 @@ const registerSchema = yup.object().shape({
     .required('O CEP é obrigatório')
     .length(9, 'O CEP deve ter 9 caracteres'),
   endereco: yup.string().required('O endereço é obrigatório'),
-  numero_endereco: yup
-    .string()
-    .required('O número da residência é obrigatório'),
   bairro: yup.string().required('O bairro é obrigatório'),
   complemento: yup.string().optional(),
   id_plano: yup.string().required('Selecione um plano'),
@@ -105,14 +102,14 @@ const registerSchema = yup.object().shape({
   }),
 });
 
-export default function FormUsuario({ abrirForm } : any  ) {
+export default function FormUsuario({ abrirForm }: any) {
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(registerSchema),
-    defaultValues:async () => {
+    defaultValues: async () => {
       if (abrirForm) {
         const token = await AsyncStorage.getItem('token');
 
@@ -124,14 +121,14 @@ export default function FormUsuario({ abrirForm } : any  ) {
 
         return data;
       }
-    }
+    },
   });
 
   const toast = useToast();
   const router = useRouter();
 
   useEffect(() => {
-    console.log('teste')
+    console.log('teste');
     const fetchData = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
@@ -195,7 +192,7 @@ export default function FormUsuario({ abrirForm } : any  ) {
       console.error('Erro ao buscar dados das APIs:', error);
     }
   };
-  
+
   const [mostraInputPlano, setMostraInputPlano] = useState(true);
   const [mostraTextareaAlergia, setMostraTextareaAlergia] = useState(true);
   const [mostraTextareaMed, setMostraTextareaMed] = useState(true);
@@ -342,7 +339,11 @@ export default function FormUsuario({ abrirForm } : any  ) {
                 name="estado"
                 defaultValue={''}
                 render={({ field: { onChange } }) => (
-                  <Select onValueChange={onChange}>
+                  <Select
+                    onValueChange={onChange}
+                    selectedLabel="SP"
+                    selectedValue="SP"
+                  >
                     <SelectTrigger>
                       <SelectInput placeholder="Selecione um estado" />
                       <SelectIcon mr="$3">
@@ -378,9 +379,10 @@ export default function FormUsuario({ abrirForm } : any  ) {
               <Controller
                 control={control}
                 name="id_cidade"
-                // defaultValue={''}
+                defaultValue={''}
                 render={({ field: { onChange, value } }) => (
-                  <Select onValueChange={onChange} selectedValue={value}>
+                  <Select onValueChange={onChange} 
+                          selectedValue={value}>
                     <SelectTrigger>
                       <SelectInput placeholder="Selecione uma cidade" />
                       <SelectIcon mr="$3">
@@ -397,6 +399,7 @@ export default function FormUsuario({ abrirForm } : any  ) {
                             key={index}
                             label={option.label}
                             value={option.value}
+                            
                           />
                         ))}
                       </SelectContent>
@@ -455,8 +458,9 @@ export default function FormUsuario({ abrirForm } : any  ) {
                   render={({ field: { onChange, value } }) => (
                     <InputField
                       type="text"
-                      placeholder="Digite seu endereço"
+                      placeholder="Digite seu endereço completo com número"
                       onChangeText={onChange}
+                      value={value}
                     />
                   )}
                 />
@@ -465,33 +469,6 @@ export default function FormUsuario({ abrirForm } : any  ) {
                 <FormControlErrorIcon as={AlertCircleIcon} />
                 <FormControlErrorText>
                   {errors.endereco?.message}
-                </FormControlErrorText>
-              </FormControlError>
-            </FormControl>
-          </Box>
-          <Box>
-            <FormControl
-              w="80%"
-              isRequired
-              isInvalid={'numero_endereco' in errors}
-            >
-              <FormControlLabel>
-                <FormControlLabelText>Número</FormControlLabelText>
-              </FormControlLabel>
-              <Input>
-                <Controller
-                  control={control}
-                  name="numero_endereco"
-                  defaultValue={''}
-                  render={({ field: { onChange, value } }) => (
-                    <InputField type="text" onChangeText={onChange} />
-                  )}
-                />
-              </Input>
-              <FormControlError>
-                <FormControlErrorIcon as={AlertCircleIcon} />
-                <FormControlErrorText>
-                  {errors.numero_endereco?.message}
                 </FormControlErrorText>
               </FormControlError>
             </FormControl>
@@ -511,6 +488,7 @@ export default function FormUsuario({ abrirForm } : any  ) {
                       type="text"
                       placeholder="Digite seu bairro"
                       onChangeText={onChange}
+                      value={value}
                     />
                   )}
                 />
@@ -538,6 +516,7 @@ export default function FormUsuario({ abrirForm } : any  ) {
                       type="text"
                       placeholder="Digite um complemento"
                       onChangeText={onChange}
+                      value={value}
                     />
                   )}
                 />
@@ -565,6 +544,7 @@ export default function FormUsuario({ abrirForm } : any  ) {
                         setMostraInputPlano(true);
                       }
                     }}
+                    value={value}
                   >
                     {planos.map((option, index) => (
                       <Radio key={index} value={option.value}>
@@ -636,7 +616,7 @@ export default function FormUsuario({ abrirForm } : any  ) {
                 name="alergia"
                 defaultValue={''}
                 render={({ field: { onChange, value } }) => (
-                  <RadioGroup onChange={onChange}>
+                  <RadioGroup onChange={onChange} value={value}>
                     <HStack space="2xl">
                       <Radio
                         value="S"
@@ -698,7 +678,7 @@ export default function FormUsuario({ abrirForm } : any  ) {
                         onChange(value);
                       }}
                       placeholder="Digite sua alergia"
-                      value={dsAlergiaValue}
+                      value={value || dsAlergiaValue}
                     />
                   )}
                 />
@@ -725,7 +705,7 @@ export default function FormUsuario({ abrirForm } : any  ) {
                 name="med_cont"
                 defaultValue={''}
                 render={({ field: { onChange, value } }) => (
-                  <RadioGroup onChange={onChange}>
+                  <RadioGroup onChange={onChange} value={value}>
                     <HStack space="2xl">
                       <Radio
                         value="S"
@@ -784,7 +764,7 @@ export default function FormUsuario({ abrirForm } : any  ) {
                         setDsMedicamentoValue(value);
                         onChange(value);
                       }}
-                      value={dsMedicamentoValue}
+                      value={value || dsMedicamentoValue}
                       placeholder="Digite seu medicamento"
                     />
                   )}
@@ -812,7 +792,7 @@ export default function FormUsuario({ abrirForm } : any  ) {
                 name="cirurgia"
                 defaultValue={''}
                 render={({ field: { onChange, value } }) => (
-                  <RadioGroup onChange={onChange}>
+                  <RadioGroup onChange={onChange} value={value}>
                     <HStack space="2xl">
                       <Radio
                         value="S"
@@ -873,7 +853,7 @@ export default function FormUsuario({ abrirForm } : any  ) {
                         setDsCirurgiaValue(value);
                         onChange(value);
                       }}
-                      value={dsCirurgiaValue}
+                      value={value || dsCirurgiaValue}
                       placeholder="Digite sua cirurgia"
                     />
                   )}
@@ -907,6 +887,7 @@ export default function FormUsuario({ abrirForm } : any  ) {
                         : setMostraTextareaComorb(true);
                       setDsComorbidadeValue('');
                     }}
+                    selectedValue={value}
                   >
                     <SelectTrigger>
                       <SelectInput placeholder="Selecione uma comorbidade" />
