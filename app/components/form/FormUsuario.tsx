@@ -102,7 +102,7 @@ const registerSchema = yup.object().shape({
   }),
 });
 
-export default function FormUsuario({ abrirForm }: any) {
+export default function FormUsuario({ abrirForm, id_contato='' }: any) {
   const {
     handleSubmit,
     control,
@@ -112,12 +112,33 @@ export default function FormUsuario({ abrirForm }: any) {
     defaultValues: async () => {
       if (abrirForm) {
         const token = await AsyncStorage.getItem('token');
-
-        const { data } = await api.get<any>('/retorno.php?acao=formulario', {
+        
+        const { data } = await api.get<any>('/retorno.php?acao=formulario&id_contato=' + id_contato, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+
+        if(data.id_plano == '8'){
+          setMostraInputPlano(false);
+        }
+        if(data.alergia == 'S'){
+          setMostraTextareaAlergia(false);
+        }
+        if(data.med_cont == 'S'){
+          setMostraTextareaMed(false);
+        }
+        if(data.cirurgia == 'S'){
+          setMostraTextareaCirurgia(false);
+        }
+        if(data.id_comorbidade == '21'){
+          setMostraTextareaComorb(false);
+        }
+
+        setlblCidade(data.lbl_cidade);
+        setlblComorbidade(data.lbl_comorbidade);
+        setTituloForm('Atualização do formulário')
+        setTxtBotao('Atualizar formulário');
 
         return data;
       }
@@ -128,7 +149,6 @@ export default function FormUsuario({ abrirForm }: any) {
   const router = useRouter();
 
   useEffect(() => {
-    console.log('teste');
     const fetchData = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
@@ -193,6 +213,8 @@ export default function FormUsuario({ abrirForm }: any) {
     }
   };
 
+  const [tituloForm, setTituloForm] = useState('Criação de formulário');
+
   const [mostraInputPlano, setMostraInputPlano] = useState(true);
   const [mostraTextareaAlergia, setMostraTextareaAlergia] = useState(true);
   const [mostraTextareaMed, setMostraTextareaMed] = useState(true);
@@ -207,11 +229,16 @@ export default function FormUsuario({ abrirForm }: any) {
   const [dsCirurgiaValue, setDsCirurgiaValue] = useState('');
   const [dsComorbidadeValue, setDsComorbidadeValue] = useState('');
 
+  const [lblCidade, setlblCidade] = useState('');
+  const [lblComorbidade, setlblComorbidade] = useState('');
+
+  const [txtBotao, setTxtBotao] = useState('Criar formulário');
+
   return (
     <Box width="100%" alignItems="center" bg="white">
       <ScrollView>
         <VStack space="lg">
-          <FormHeader title="Criação de formulário" />
+          <FormHeader title={tituloForm} />
           <Box>
             <FormControl isRequired isInvalid={'dt_nascimento' in errors}>
               <FormControlLabel>
@@ -341,8 +368,7 @@ export default function FormUsuario({ abrirForm }: any) {
                 render={({ field: { onChange } }) => (
                   <Select
                     onValueChange={onChange}
-                    selectedLabel="SP"
-                    selectedValue="SP"
+                    selectedValue="SÃO PAULO"
                   >
                     <SelectTrigger>
                       <SelectInput placeholder="Selecione um estado" />
@@ -381,8 +407,9 @@ export default function FormUsuario({ abrirForm }: any) {
                 name="id_cidade"
                 defaultValue={''}
                 render={({ field: { onChange, value } }) => (
-                  <Select onValueChange={onChange} 
-                          selectedValue={value}>
+                  <Select
+                  onValueChange={onChange} 
+                  selectedValue={lblCidade}>
                     <SelectTrigger>
                       <SelectInput placeholder="Selecione uma cidade" />
                       <SelectIcon mr="$3">
@@ -399,7 +426,6 @@ export default function FormUsuario({ abrirForm }: any) {
                             key={index}
                             label={option.label}
                             value={option.value}
-                            
                           />
                         ))}
                       </SelectContent>
@@ -885,9 +911,9 @@ export default function FormUsuario({ abrirForm }: any) {
                       v == '21'
                         ? setMostraTextareaComorb(false)
                         : setMostraTextareaComorb(true);
-                      setDsComorbidadeValue('');
+                          setDsComorbidadeValue('');
                     }}
-                    selectedValue={value}
+                    selectedValue={lblComorbidade}
                   >
                     <SelectTrigger>
                       <SelectInput placeholder="Selecione uma comorbidade" />
@@ -961,7 +987,7 @@ export default function FormUsuario({ abrirForm }: any) {
           </Box>
           <Box>
             <Button onPress={handleSubmit(onSubmit)}>
-              <ButtonText>Criar formulário</ButtonText>
+              <ButtonText>{txtBotao}</ButtonText>
             </Button>
           </Box>
         </VStack>

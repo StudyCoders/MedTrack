@@ -3,11 +3,11 @@ import FormUsuario from '../../components/form/FormUsuario';
 import { useLocalSearchParams, useGlobalSearchParams, Link } from 'expo-router';
 
 export default function UserForm() {
-  const { abrirForm } = useLocalSearchParams<any>();
+  const { abrirForm, id_contato } = useLocalSearchParams<any>();
 
   return (
     <ScrollView>
-      <FormUsuario abrirForm={abrirForm}/>
+      <FormUsuario abrirForm={abrirForm} id_contato={id_contato} />
     </ScrollView>
   );
 }
