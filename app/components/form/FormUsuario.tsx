@@ -102,7 +102,7 @@ const registerSchema = yup.object().shape({
   }),
 });
 
-export default function FormUsuario({ abrirForm, id_contato='' }: any) {
+export default function FormUsuario({ abrirForm, id_contato = '' }: any) {
   const {
     handleSubmit,
     control,
@@ -112,26 +112,26 @@ export default function FormUsuario({ abrirForm, id_contato='' }: any) {
     defaultValues: async () => {
       if (abrirForm) {
         const token = await AsyncStorage.getItem('token');
-        
+
         const { data } = await api.get<any>('/retorno.php?acao=formulario&id_contato=' + id_contato, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if(data.id_plano == '8'){
+        if (data.id_plano == '8') {
           setMostraInputPlano(false);
         }
-        if(data.alergia == 'S'){
+        if (data.alergia == 'S') {
           setMostraTextareaAlergia(false);
         }
-        if(data.med_cont == 'S'){
+        if (data.med_cont == 'S') {
           setMostraTextareaMed(false);
         }
-        if(data.cirurgia == 'S'){
+        if (data.cirurgia == 'S') {
           setMostraTextareaCirurgia(false);
         }
-        if(data.id_comorbidade == '21'){
+        if (data.id_comorbidade == '21') {
           setMostraTextareaComorb(false);
         }
 
@@ -364,11 +364,11 @@ export default function FormUsuario({ abrirForm, id_contato='' }: any) {
               <Controller
                 control={control}
                 name="estado"
-                defaultValue={''}
-                render={({ field: { onChange } }) => (
+                defaultValue={"SÃO PAULO"}
+                render={({ field: { onChange, value } }) => (
                   <Select
                     onValueChange={onChange}
-                    selectedValue="SÃO PAULO"
+                    selectedValue={value}
                   >
                     <SelectTrigger>
                       <SelectInput placeholder="Selecione um estado" />
@@ -387,7 +387,6 @@ export default function FormUsuario({ abrirForm, id_contato='' }: any) {
                   </Select>
                 )}
               />
-
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
                 <FormControlErrorText>
@@ -408,8 +407,8 @@ export default function FormUsuario({ abrirForm, id_contato='' }: any) {
                 defaultValue={''}
                 render={({ field: { onChange, value } }) => (
                   <Select
-                  onValueChange={onChange} 
-                  selectedValue={lblCidade}>
+                    onValueChange={onChange}
+                    selectedValue={lblCidade}>
                     <SelectTrigger>
                       <SelectInput placeholder="Selecione uma cidade" />
                       <SelectIcon mr="$3">
@@ -911,7 +910,7 @@ export default function FormUsuario({ abrirForm, id_contato='' }: any) {
                       v == '21'
                         ? setMostraTextareaComorb(false)
                         : setMostraTextareaComorb(true);
-                          setDsComorbidadeValue('');
+                      setDsComorbidadeValue('');
                     }}
                     selectedValue={lblComorbidade}
                   >

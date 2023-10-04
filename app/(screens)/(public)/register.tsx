@@ -84,7 +84,7 @@ export default function register() {
             },
           });
         }
-
+        
         router.push({
           pathname: "login",
           params: {
