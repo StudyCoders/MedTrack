@@ -85,7 +85,7 @@ export default function Formulario() {
               </Text> :
 
               contatos.map( (item :any) => (
-                <Box bg="$white" borderRadius="$lg" p={10} shadowRadius={1}>
+                <Box bg="$white" borderRadius="$lg" p={15} shadowRadius={1}>
                   <HStack space="lg">
                     <Avatar bgColor={generateColor()}>
                       <AvatarFallbackText>{item.tipo_contato}</AvatarFallbackText>
