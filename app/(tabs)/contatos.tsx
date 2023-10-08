@@ -39,7 +39,7 @@ export default function Formulario() {
   }, []);
 
   const abrirForm = async () => {
-    router.push("userForm");
+    router.push({pathname: "userForm", params: { formContato: true }});
   }
 
   const abrirFormContato = async (id_contato :any) => {

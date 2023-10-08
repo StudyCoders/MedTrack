@@ -56,6 +56,9 @@ import api from '../../api/axios';
 import * as Location from 'expo-location';
 
 const registerSchema = yup.object().shape({
+  nm_contato: yup
+    .string()
+    .required('Nome do contato é obrigatório'),
   dt_nascimento: yup
     .string()
     .required('A data de nascimento é obrigatória')
@@ -102,7 +105,7 @@ const registerSchema = yup.object().shape({
   }),
 });
 
-export default function FormUsuario({ abrirForm, id_contato='' }: any) {
+export default function FormUsuario({ abrirForm, id_contato='', formContato=false }: any) {
   const {
     handleSubmit,
     control,
@@ -239,6 +242,61 @@ export default function FormUsuario({ abrirForm, id_contato='' }: any) {
       <ScrollView>
         <VStack space="lg">
           <FormHeader title={tituloForm} />
+          {formContato ?
+              <Box>
+                <Box>
+                  <FormControl isRequired isInvalid={'nm_contato' in errors}>
+                    <FormControlLabel>
+                      <FormControlLabelText>Nome do contato</FormControlLabelText>
+                    </FormControlLabel>
+                    <Input>
+                      <Controller
+                        control={control}
+                        name="nm_contato"
+                        defaultValue={''}
+                        render={({ field: { onChange, value } }) => (
+                          <InputField
+                            type="text"
+                            placeholder="Digite um nome para o contato"
+                            onChangeText={onChange}
+                            value={value}
+                          />
+                        )}
+                      />
+                    </Input>
+                    <FormControlError>
+                      <FormControlErrorIcon as={AlertCircleIcon} />
+                      <FormControlErrorText>
+                        {errors.nm_contato?.message}
+                      </FormControlErrorText>
+                    </FormControlError>
+                  </FormControl>
+                </Box>
+                <Box mt={15}>
+                  <FormControl>
+                    <FormControlLabel>
+                      <FormControlLabelText>CPF do contato (caso souber)</FormControlLabelText>
+                    </FormControlLabel>
+                    <Input>
+                      <Controller
+                        control={control}
+                        name="cpf_contato"
+                        defaultValue={''}
+                        render={({ field: { onChange, value } }) => (
+                          <InputField
+                            type="text"
+                            placeholder="Digite o CPF do contato"
+                            onChangeText={onChange}
+                            value={value}
+                          />
+                        )}
+                      />
+                    </Input>
+                  </FormControl>
+                </Box>
+              </Box>
+                : ''}
+          
           <Box>
             <FormControl isRequired isInvalid={'dt_nascimento' in errors}>
               <FormControlLabel>
@@ -368,7 +426,6 @@ export default function FormUsuario({ abrirForm, id_contato='' }: any) {
                 render={({ field: { onChange } }) => (
                   <Select
                     onValueChange={onChange}
-                    selectedValue="SÃO PAULO"
                   >
                     <SelectTrigger>
                       <SelectInput placeholder="Selecione um estado" />
@@ -408,7 +465,7 @@ export default function FormUsuario({ abrirForm, id_contato='' }: any) {
                 defaultValue={''}
                 render={({ field: { onChange, value } }) => (
                   <Select
-                  onValueChange={onChange} 
+                  onValueChange={setlblCidade}
                   selectedValue={lblCidade}>
                     <SelectTrigger>
                       <SelectInput placeholder="Selecione uma cidade" />
@@ -913,6 +970,7 @@ export default function FormUsuario({ abrirForm, id_contato='' }: any) {
                         : setMostraTextareaComorb(true);
                           setDsComorbidadeValue('');
                     }}
+                    onValueChange={setlblComorbidade}
                     selectedValue={lblComorbidade}
                   >
                     <SelectTrigger>
