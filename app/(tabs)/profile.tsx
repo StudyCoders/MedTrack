@@ -40,7 +40,7 @@ export default function Profile() {
   }, []);
 
   const abrirForm = async () => {
-    router.push("userForm");
+    router.push({pathname: "userForm", params: { abrirForm: true }});
   }
 
   const encerrarSessao = async () => {

@@ -39,7 +39,11 @@ export default function Formulario() {
   }, []);
 
   const abrirForm = async () => {
-    router.push("userForm");
+    router.push({pathname: "userForm", params: { formContato: true }});
+  }
+
+  const abrirFormContato = async (id_contato :any) => {
+    router.push({pathname: "userForm", params: { abrirForm: true, id_contato: id_contato }});
   }
 
   const generateColor = () => {
@@ -80,8 +84,8 @@ export default function Formulario() {
                 Nenhum contato encontrado
               </Text> :
 
-              contatos.map((item) => (
-                <Box bg="$white" borderRadius="$lg" p={10} shadowRadius={1}>
+              contatos.map( (item :any) => (
+                <Box bg="$white" borderRadius="$lg" p={15} shadowRadius={1}>
                   <HStack space="lg">
                     <Avatar bgColor={generateColor()}>
                       <AvatarFallbackText>{item.tipo_contato}</AvatarFallbackText>
@@ -91,7 +95,10 @@ export default function Formulario() {
                       <Text size="sm">{item.cpf}</Text>
                     </VStack>
                   </HStack>
-                  <Button action="primary" mt={10}>
+                  <Button
+                  action="primary"
+                  mt={10}
+                  onPress={ () => abrirFormContato(item.id_contato)}>
                     <ButtonText>Visualizar</ButtonText>
                   </Button>
                 </Box>

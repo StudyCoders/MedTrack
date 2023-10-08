@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "my-app",
-    "slug": "my-app",
+    "name": "QuickSafe - Compartilhe Sua Localização em Casos de Emergência",
+    "slug": "QuickSafe",
     "scheme": "my-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -19,13 +19,14 @@
       "supportsTablet": true,
       "config": {
         "usesNonExemptEncryption": false
-      } 
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.lucashayashi1.QuickSafe"
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -33,6 +34,14 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "cc81794e-9faf-431a-a359-36397f94be9f"
+      }
+    }
   }
 }
