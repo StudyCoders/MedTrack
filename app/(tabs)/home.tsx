@@ -1,4 +1,5 @@
 import {
+  Text,
   VStack,
   Box,
   Alert,
@@ -12,6 +13,13 @@ import {
   PhoneIcon,
   Center,
 } from "@gluestack-ui/themed";
+import { useFonts } from "expo-font";
+import {
+  Orbitron_400Regular,
+  Orbitron_500Medium,
+  Orbitron_600SemiBold,
+  Orbitron_700Bold,
+} from "@expo-google-fonts/orbitron";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import { Linking } from "react-native";
@@ -66,9 +74,21 @@ export async function ligar() {
 }
 
 export default function Home() {
+  const [fontsLoaded] = useFonts({
+    Orbitron_400Regular,
+    Orbitron_500Medium,
+    Orbitron_600SemiBold,
+    Orbitron_700Bold,
+  });
+
   return (
     <VStack flex={1}>
-      <Center h="90%">
+      <Center>
+        <Text fontFamily="Orbitron_500Medium" fontSize={"$7xl"} p={"$12"}>
+          QuickSafe
+        </Text>
+      </Center>
+      <Center h="80%">
         <Box alignItems="center" m={15}>
           <Image source={require("../assets/images/logo-sos.png")} />
           <Button
