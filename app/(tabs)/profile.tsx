@@ -9,13 +9,22 @@ import {
   ToastDescription,
   VStack,
   useToast,
+  Image
 } from "@gluestack-ui/themed";
-import FormHeader from "../components/form/FormHeader";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../api/axios";
+import {
+  Orbitron_400Regular,
+  Orbitron_500Medium,
+  useFonts
+} from "@expo-google-fonts/orbitron";
 
 export default function Profile() {
+  const [fontsLoaded] = useFonts({
+    Orbitron_400Regular,
+    Orbitron_500Medium
+  });
   const { onLogout } = useAuth();
   const toast = useToast();
 
@@ -70,7 +79,12 @@ export default function Profile() {
 
   return (
     <VStack space="lg" p={15}>
-      <FormHeader title="QuickSafe" />
+      <Box alignItems="center">
+        <Image source={require("../assets/images/logo-md.png")} />
+        <Text fontFamily="Orbitron_500Medium" fontSize={"$4xl"}>
+          QuickSafe
+        </Text>
+      </Box>
       <Box mb={15}>
         <Box>
           <Text size="xl" fontWeight="bold">Nome</Text>

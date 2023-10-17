@@ -84,7 +84,7 @@ export default function Home() {
   return (
     <VStack flex={1}>
       <Center>
-        <Text fontFamily="Orbitron_500Medium" fontSize={"$7xl"} p={"$12"}>
+        <Text fontFamily="Orbitron_500Medium" fontSize={"$5xl"} p={"$12"}>
           QuickSafe
         </Text>
       </Center>
