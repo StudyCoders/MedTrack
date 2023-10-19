@@ -242,7 +242,7 @@ export default function FormUsuario({
   const [dsCirurgiaValue, setDsCirurgiaValue] = useState("");
   const [dsComorbidadeValue, setDsComorbidadeValue] = useState("");
 
-  const [lblCidade, setlblCidade] = useState("");
+  const [lblCidade, setlblCidade] = useState(undefined);
   const [lblComorbidade, setlblComorbidade] = useState("");
   const [txtBotao, setTxtBotao] = useState("Criar formulário");
 
@@ -489,7 +489,7 @@ export default function FormUsuario({
                     <Select
                       onValueChange={onChange}
                       selectedLabel={lblCidade}
-                      selectedValue={value}
+                      {...(abrirForm ? { selectedValue: value } : {})}
                     >
                       <SelectTrigger>
                         <SelectInput placeholder="Selecione uma cidade" />
@@ -995,7 +995,7 @@ export default function FormUsuario({
                         setDsComorbidadeValue("");
                         setValue("ds_comorbidade", "");
                       }}
-                      selectedValue={value}
+                      {...(abrirForm ? { selectedValue: value } : {})}
                       selectedLabel={lblComorbidade}
                     >
                       <SelectTrigger>
