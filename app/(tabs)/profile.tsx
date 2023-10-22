@@ -1,5 +1,5 @@
 import { useAuth } from "../context/AuthContext";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import {
   Box,
   Button,
@@ -76,6 +76,29 @@ export default function Profile() {
   };
 
   const [info, setInfos]: any = useState("");
+
+  
+  const { msg, action } = useLocalSearchParams<{
+    msg: string;
+    action: 'error' | 'warning' | 'success' | 'info' | 'attention';
+  }>();
+
+  useEffect(() => {
+    if (msg && action) {
+      toast.show({
+        placement: 'top',
+        render: ({ id }) => {
+          return (
+            <Toast nativeID={id} action={action} variant="accent">
+              <VStack space="xs">
+                <ToastDescription>{msg}</ToastDescription>
+              </VStack>
+            </Toast>
+          );
+        },
+      });
+    }
+  }, [msg, action]);
 
   return (
     <VStack space="lg" p={15}>

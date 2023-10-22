@@ -9,10 +9,13 @@ import { AddIcon,
          VStack,
          Text,
          HStack,
-         Heading} from "@gluestack-ui/themed";
+         Heading,
+         Toast,
+         ToastDescription,
+         useToast} from "@gluestack-ui/themed";
 import { ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import api from "../api/axios";
@@ -54,6 +57,29 @@ export default function Formulario() {
   };
 
   const [contatos, setContatos]: any = useState([]);
+
+  const toast = useToast();
+  const { msg, action } = useLocalSearchParams<{
+    msg: string;
+    action: 'error' | 'warning' | 'success' | 'info' | 'attention';
+  }>();
+
+  useEffect(() => {
+    if (msg && action) {
+      toast.show({
+        placement: 'top',
+        render: ({ id }) => {
+          return (
+            <Toast nativeID={id} action={action} variant="accent">
+              <VStack space="xs">
+                <ToastDescription>{msg}</ToastDescription>
+              </VStack>
+            </Toast>
+          );
+        },
+      });
+    }
+  }, [msg, action]);
   
   return (
     <ScrollView>
