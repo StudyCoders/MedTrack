@@ -1,11 +1,12 @@
 import { Tabs } from "expo-router";
-import { GluestackUIProvider, config } from "@gluestack-ui/themed";
+import { GluestackUIProvider } from "@gluestack-ui/themed";
+import { config } from "@gluestack-ui/config";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AuthProvider } from "../context/AuthContext";
 
 export default function TabRoutesLayout() {
   return (
-    <GluestackUIProvider config={config.theme}>
+    <GluestackUIProvider config={config}>
       <AuthProvider>
         <Tabs>
           <Tabs.Screen

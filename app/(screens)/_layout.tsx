@@ -1,10 +1,11 @@
-import { GluestackUIProvider, config } from "@gluestack-ui/themed";
+import { GluestackUIProvider } from "@gluestack-ui/themed";
+import { config } from "@gluestack-ui/config";
 import { Stack } from "expo-router";
 import { AuthProvider } from "../context/AuthContext";
 
 export default function ScreenRoutesLayout() {
   return (
-    <GluestackUIProvider config={config.theme}>
+    <GluestackUIProvider config={config}>
       <AuthProvider>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="loginToken" />
