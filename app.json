@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "QuickSafe - Compartilhe Sua Localização em Casos de Emergência",
-    "slug": "QuickSafe",
+    "name": "QuickSafe",
+    "slug": "QuickSafe - Compartilhe Sua Localização em Casos de Emergência",
     "scheme": "my-app",
     "version": "1.0.0",
     "orientation": "portrait",
