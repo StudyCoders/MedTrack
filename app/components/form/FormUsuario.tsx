@@ -206,7 +206,24 @@ export default function FormUsuario({
           await Location.requestForegroundPermissionsAsync();
         }
 
-        router.replace("home");
+        if(abrirForm){
+          router.push({
+            pathname: id_contato ? 'contatos' : 'profile',
+            params: {
+              msg: 'Fomulário atualizado com sucesso',
+              action: 'success',
+            },
+          });
+        }else{
+          router.push({
+            pathname: 'contatos',
+            params: {
+              msg: 'Formulário criado com sucesso',
+              action: 'success',
+            },
+          });
+        }
+
       } else {
         return toast.show({
           placement: "top",
