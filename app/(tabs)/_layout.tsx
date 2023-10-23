@@ -3,6 +3,7 @@ import { GluestackUIProvider } from "@gluestack-ui/themed";
 import { config } from "@gluestack-ui/config";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AuthProvider } from "../context/AuthContext";
+import Toast from 'react-native-toast-message';
 
 export default function TabRoutesLayout() {
   return (
@@ -40,6 +41,7 @@ export default function TabRoutesLayout() {
             }}
           />
         </Tabs>
+        <Toast />
       </AuthProvider>
     </GluestackUIProvider>
   );

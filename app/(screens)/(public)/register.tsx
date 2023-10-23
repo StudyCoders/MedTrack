@@ -11,17 +11,14 @@ import {
   FormControlError,
   FormControlErrorIcon,
   AlertCircleIcon,
-  FormControlErrorText,
-  Toast,
-  ToastDescription,
-  useToast,
+  FormControlErrorText
 } from '@gluestack-ui/themed';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useForm, Controller } from 'react-hook-form';
-import axios from 'axios';
 import { useRouter } from 'expo-router';
 import maskCpf from '../../utilities/masks/cpfMask';
+import Toast from 'react-native-toast-message';
 
 import FormHeader from '../../components/form/FormHeader';
 import { useAuth } from '../../context/AuthContext';
@@ -58,7 +55,6 @@ export default function register() {
     resolver: yupResolver(registerSchema),
   });
 
-  const toast = useToast();
   const router = useRouter();
   const { onRegister } = useAuth();
 
@@ -71,17 +67,9 @@ export default function register() {
         const result: any = await onRegister(data);
 
         if (result.error) {
-          return toast.show({
-            placement: 'top',
-            render: ({ id }) => {
-              return (
-                <Toast nativeID={id} action="error" variant="accent">
-                  <VStack space="xs">
-                    <ToastDescription>{result.msg}</ToastDescription>
-                  </VStack>
-                </Toast>
-              );
-            },
+          return Toast.show({
+            type: "error",
+            text1: result.msg
           });
         }
 

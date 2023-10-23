@@ -14,9 +14,6 @@ import {
   FormControlErrorIcon,
   AlertCircleIcon,
   FormControlErrorText,
-  Toast,
-  ToastDescription,
-  useToast,
   Radio,
   RadioLabel,
   RadioGroup,
@@ -55,6 +52,7 @@ import ISelectProps from "../../utilities/interfaces/ISelectProps";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../api/axios";
 import * as Location from "expo-location";
+import Toast from 'react-native-toast-message';
 
 export default function FormUsuario({
   abrirForm,
@@ -158,7 +156,6 @@ export default function FormUsuario({
     },
   });
 
-  const toast = useToast();
   const router = useRouter();
 
   useEffect(() => {
@@ -225,17 +222,9 @@ export default function FormUsuario({
         }
 
       } else {
-        return toast.show({
-          placement: "top",
-          render: ({ id }) => {
-            return (
-              <Toast nativeID={id} action="success" variant="accent">
-                <VStack space="xs">
-                  <ToastDescription>{data.erro}</ToastDescription>
-                </VStack>
-              </Toast>
-            );
-          },
+        Toast.show({
+          type: "error",
+          text1: data.error
         });
       }
     } catch (error) {

@@ -14,9 +14,6 @@ import {
   FormControlErrorIcon,
   AlertCircleIcon,
   FormControlErrorText,
-  Toast,
-  ToastDescription,
-  useToast,
 } from '@gluestack-ui/themed';
 import FormHeader from '../../components/form/FormHeader';
 import { Link, useRouter, useLocalSearchParams } from 'expo-router';
@@ -26,6 +23,7 @@ import * as yup from 'yup';
 import { useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import jwt_decode from 'jwt-decode';
+import Toast from 'react-native-toast-message';
 
 const loginSchema = yup
   .object()
@@ -47,7 +45,6 @@ export default function Login() {
     resolver: yupResolver(loginSchema),
   });
   const router = useRouter();
-  const toast = useToast();
   const { onLogin } = useAuth();
 
   const onSubmit = async (data: any) => {
@@ -55,17 +52,9 @@ export default function Login() {
       const result: any = await onLogin(data);
       console.log(result);
       if (result.error) {
-        return toast.show({
-          placement: 'top',
-          render: ({ id }) => {
-            return (
-              <Toast nativeID={id} action="error" variant="accent">
-                <VStack space="xs">
-                  <ToastDescription>{result.msg}</ToastDescription>
-                </VStack>
-              </Toast>
-            );
-          },
+        Toast.show({
+          type: "error",
+          text1: result.msg
         });
       } else {
         let token = result['data'].token;
@@ -87,17 +76,9 @@ export default function Login() {
 
   useEffect(() => {
     if (msg && action) {
-      toast.show({
-        placement: 'top',
-        render: ({ id }) => {
-          return (
-            <Toast nativeID={id} action={action} variant="accent">
-              <VStack space="xs">
-                <ToastDescription>{msg}</ToastDescription>
-              </VStack>
-            </Toast>
-          );
-        },
+      Toast.show({
+        type: action,
+        text1: msg
       });
     }
   }, [msg, action]);
