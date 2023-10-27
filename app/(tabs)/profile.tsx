@@ -5,10 +5,7 @@ import {
   Button,
   ButtonText,
   Text,
-  Toast,
-  ToastDescription,
   VStack,
-  useToast,
   Image
 } from "@gluestack-ui/themed";
 import { useEffect, useState } from "react";
@@ -19,6 +16,7 @@ import {
   Orbitron_500Medium,
   useFonts
 } from "@expo-google-fonts/orbitron";
+import Toast from 'react-native-toast-message';
 
 export default function Profile() {
   const [fontsLoaded] = useFonts({
@@ -26,7 +24,6 @@ export default function Profile() {
     Orbitron_500Medium
   });
   const { onLogout } = useAuth();
-  const toast = useToast();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,17 +54,9 @@ export default function Profile() {
       const result: any = await onLogout();
 
       if (result.error) {
-        return toast.show({
-          placement: "top",
-          render: ({ id }) => {
-            return (
-              <Toast nativeID={id} action="error" variant="accent">
-                <VStack space="xs">
-                  <ToastDescription>{result.msg}</ToastDescription>
-                </VStack>
-              </Toast>
-            );
-          },
+        Toast.show({
+          type: "error",
+          text1: result.msg
         });
       } else {
         router.push("login");
@@ -85,17 +74,9 @@ export default function Profile() {
 
   useEffect(() => {
     if (msg && action) {
-      toast.show({
-        placement: 'top',
-        render: ({ id }) => {
-          return (
-            <Toast nativeID={id} action={action} variant="accent">
-              <VStack space="xs">
-                <ToastDescription>{msg}</ToastDescription>
-              </VStack>
-            </Toast>
-          );
-        },
+      Toast.show({
+        type: action,
+        text1: msg
       });
     }
   }, [msg, action]);
