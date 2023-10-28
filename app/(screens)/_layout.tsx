@@ -9,10 +9,10 @@ export default function ScreenRoutesLayout() {
     <GluestackUIProvider config={config}>
       <AuthProvider>
         <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="loginToken" />
-          <Stack.Screen name="login" />
-          <Stack.Screen name="register" />
-          <Stack.Screen name="userForm" />
+          <Stack.Screen name="(public)/loginToken" />
+          <Stack.Screen name="(public)/login" />
+          <Stack.Screen name="(public)/register" />
+          <Stack.Screen name="(private)/userForm" />
         </Stack>
         <Toast />
       </AuthProvider>

@@ -6,7 +6,6 @@ import {
   AlertIcon,
   AlertText,
   InfoIcon,
-  Image,
   Button,
   ButtonText,
   ButtonIcon,
@@ -22,8 +21,10 @@ import {
 } from "@expo-google-fonts/orbitron";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
-import { Linking } from "react-native";
+import { Linking, Image } from "react-native";
 import api from "../api/axios";
+import { useCallback } from "react";
+import * as SplashScreen from "expo-splash-screen";
 
 export async function salvarLocalidade(coords: Location.LocationObjectCoords) {
   try {
@@ -74,23 +75,34 @@ export async function ligar() {
 }
 
 export default function Home() {
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     Orbitron_400Regular,
     Orbitron_500Medium,
     Orbitron_600SemiBold,
     Orbitron_700Bold,
   });
 
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded || fontError) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, fontError]);
+
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
+
   return (
-    <VStack flex={1}>
+    <VStack flex={1} justifyContent="space-between" onLayout={onLayoutRootView}>
+      <Text textAlign="center" fontFamily="Orbitron_500Medium" fontSize={"$5xl"} p={"$12"}>
+        QuickSafe
+      </Text>
       <Center>
-        <Text fontFamily="Orbitron_500Medium" fontSize={"$5xl"} p={"$12"}>
-          QuickSafe
-        </Text>
-      </Center>
-      <Center h="80%">
         <Box alignItems="center" m={15}>
-          <Image source={require("../assets/images/logo-sos.png")} />
+          <Image
+            source={require("../assets/images/logo-sos.png")}
+            alt="Samu Logotipo"
+          />
           <Button
             mt={10}
             size="lg"
@@ -103,23 +115,19 @@ export default function Home() {
             <ButtonIcon as={PhoneIcon} />
           </Button>
         </Box>
-        <Box>
-          <Alert mx="$2.5" action="warning" variant="accent">
-            <AlertIcon as={InfoIcon} mr="$3" />
-            <AlertText>Ligue somente em caso de emergência</AlertText>
-          </Alert>
-        </Box>
-      </Center>
-      <Box position="fixed" bottom={65}>
-        <Alert mx="$2.5" action="error" variant="outline" bg="#f8d7da">
+        <Alert mx="$4" action="warning" variant="accent">
           <AlertIcon as={InfoIcon} mr="$3" />
-          <AlertText color="#721c24" fontWeight="500">
-            No Brasil, passar trotes para ambulância é crime previsto no artigo
-            266 do Código Penal, com pena de detenção de um a seis meses ou
-            multa. Respeite as leis, seja consciente!
-          </AlertText>
+          <AlertText>Ligue somente em caso de emergência</AlertText>
         </Alert>
-      </Box>
+      </Center>
+      <Alert m={'$4'} action="error" variant="outline" bg="#f8d7da">
+        <AlertIcon as={InfoIcon} mr="$3" />
+        <AlertText color="#721c24" fontWeight="500">
+          No Brasil, passar trotes para ambulância é crime previsto no artigo
+          266 do Código Penal, com pena de detenção de um a seis meses ou
+          multa. Respeite as leis, seja consciente!
+        </AlertText>
+      </Alert>
     </VStack>
   );
 }

@@ -8,7 +8,7 @@ import {
   VStack,
   Image
 } from "@gluestack-ui/themed";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../api/axios";
 import {
@@ -17,12 +17,9 @@ import {
   useFonts
 } from "@expo-google-fonts/orbitron";
 import Toast from 'react-native-toast-message';
+import * as SplashScreen from "expo-splash-screen";
 
 export default function Profile() {
-  const [fontsLoaded] = useFonts({
-    Orbitron_400Regular,
-    Orbitron_500Medium
-  });
   const { onLogout } = useAuth();
 
   useEffect(() => {
@@ -81,11 +78,26 @@ export default function Profile() {
     }
   }, [msg, action]);
 
+  const [fontsLoaded, fontError] = useFonts({
+    Orbitron_400Regular,
+    Orbitron_500Medium,
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded || fontError) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, fontError]);
+
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
+
   return (
-    <VStack space="lg" p={15}>
+    <VStack space="lg" p={15} onLayout={onLayoutRootView}>
       <Box alignItems="center">
-        <Image source={require("../assets/images/logo-md.png")} />
-        <Text fontFamily="Orbitron_500Medium" fontSize={"$4xl"}>
+        <Image source={require("../assets/images/logo-md.png")} alt="QuickSafe Logo" />
+        <Text fontFamily="Orbitron_500Medium" p={'$5'} fontSize={"$4xl"}>
           QuickSafe
         </Text>
       </Box>

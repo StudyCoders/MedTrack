@@ -265,7 +265,7 @@ export default function FormUsuario({
         p={15}
         bgColor="white"
       >
-        <FormHeader title={tituloForm} />
+        <FormHeader title={tituloForm} titleSize={'2xl'}/>
 
         {RenderizarFormulario && formContato ? (
           <Box>

@@ -1,20 +1,15 @@
-import { Box, Text, Image } from "@gluestack-ui/themed";
+import { Image, Center, Heading } from "@gluestack-ui/themed";
 
 interface FormHeaderProps {
   title: string;
+  titleSize?: any;
 }
 
-export default function FormHeader({ title }: FormHeaderProps) {
+export default function FormHeader({ title, titleSize = "3xl" }: FormHeaderProps) {
   return (
-    <Box>
-      <Box alignItems="center">
-        <Image source={require("../../assets/images/logo-md.png")} />
-      </Box>
-      <Box>
-        <Text textAlign="center" fontSize={"$3xl"} fontWeight="bold">
-          {title}
-        </Text>
-      </Box>
-    </Box>
+    <Center>
+      <Image source={require("../../assets/images/logo-md.png")} size="xl" alt="QuickShare Logo" />
+      <Heading size={titleSize}>{title}</Heading>
+    </Center>
   );
 }
