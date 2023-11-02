@@ -113,10 +113,17 @@ export default function FormUsuario({
     handleSubmit,
     control,
     setValue,
+    reset,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(registerSchema),
-    defaultValues: async () => {
+    resolver: yupResolver(registerSchema)
+  });
+
+  const [dadosCarregados, setDadosCarregados] = useState(false);
+  const [dadosFormulario, setDadosFormulario] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
       if (abrirForm) {
         const token = await AsyncStorage.getItem("token");
 
@@ -150,16 +157,24 @@ export default function FormUsuario({
         setTituloForm("Atualização do formulário");
         setTxtBotao("Atualizar formulário");
         setDadosCarregados(true);
-
-        return data;
+        setDadosFormulario(data);
       }
-    },
-  });
+    }
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (dadosCarregados) {
+      reset(dadosFormulario);
+    }
+  }, [dadosCarregados, dadosFormulario]);
 
   const router = useRouter();
   const { formularioPendente } = useLocalSearchParams<{
     formularioPendente: boolean | any
   }>();
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -187,7 +202,7 @@ export default function FormUsuario({
 
   useEffect(() => {
     const backAction = () => {
-      if ( formularioPendente ) {
+      if (formularioPendente) {
         Alert.alert('Atenção', 'Preencha o formulário inicial antes de prosseguir', [
           {
             text: 'Ok',
@@ -228,7 +243,7 @@ export default function FormUsuario({
           await Location.requestForegroundPermissionsAsync();
         }
 
-        if(abrirForm){
+        if (abrirForm) {
           router.push({
             pathname: id_contato ? 'contatos' : 'profile',
             params: {
@@ -236,7 +251,7 @@ export default function FormUsuario({
               action: 'success',
             },
           });
-        }else{
+        } else {
           router.push({
             pathname: 'contatos',
             params: {
@@ -277,7 +292,6 @@ export default function FormUsuario({
   const [lblComorbidade, setlblComorbidade] = useState("");
   const [txtBotao, setTxtBotao] = useState("Criar formulário");
 
-  const [dadosCarregados, setDadosCarregados] = useState(false);
   const RenderizarFormulario = (abrirForm && dadosCarregados) || !abrirForm;
 
   return (
@@ -290,7 +304,7 @@ export default function FormUsuario({
         p={15}
         bgColor="white"
       >
-        <FormHeader title={tituloForm} titleSize={'2xl'}/>
+        <FormHeader title={tituloForm} titleSize={'2xl'} />
 
         {RenderizarFormulario && formContato ? (
           <Box>
