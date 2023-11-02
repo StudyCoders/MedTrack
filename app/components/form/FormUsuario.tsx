@@ -140,8 +140,6 @@ export default function FormUsuario({
           }
         );
 
-        console.log("DATAA ", data)
-
         if (data.id_plano == "8") {
           setMostraInputPlano(false);
         }
