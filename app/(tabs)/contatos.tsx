@@ -97,7 +97,7 @@ export default function Formulario() {
   }
 
   const abrirFormContato = async (id_contato: any) => {
-    router.push({ pathname: "userForm", params: { abrirForm: true, id_contato: id_contato } });
+    router.push({ pathname: "userForm", params: { abrirForm: true, id_contato: id_contato, formContato: true } });
   }
 
   const generateColor = () => {
