@@ -35,8 +35,8 @@ import {
 } from "@gluestack-ui/themed";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { ScrollView } from "react-native";
-import { useRouter } from "expo-router";
+import { ScrollView, BackHandler, Alert } from "react-native";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import FormHeader from "../../components/form/FormHeader";
 
 import maskDataNasc from "../../utilities/masks/maskDataNasc";
@@ -157,6 +157,9 @@ export default function FormUsuario({
   });
 
   const router = useRouter();
+  const { formularioPendente } = useLocalSearchParams<{
+    formularioPendente: boolean | any
+  }>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -180,6 +183,28 @@ export default function FormUsuario({
     };
 
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const backAction = () => {
+      if ( formularioPendente ) {
+        Alert.alert('Atenção', 'Preencha o formulário inicial antes de prosseguir', [
+          {
+            text: 'Ok',
+            onPress: () => null,
+            style: 'cancel',
+          },
+        ]);
+        return true;
+      }
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
   }, []);
 
   const onSubmit = async (formData: any) => {

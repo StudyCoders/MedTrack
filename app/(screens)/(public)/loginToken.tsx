@@ -22,7 +22,12 @@ export default function LoginToken() {
           if (existeForm) {
             router.replace("home");
           } else {
-            router.replace("userForm");
+            router.push({
+              pathname: 'userForm',
+              params: {
+                formularioPendente: true,
+              },
+            });
           }
         } catch (e) {
           router.replace("login");
