@@ -36,8 +36,8 @@ import {
 } from "@gluestack-ui/themed";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { ScrollView } from "react-native";
-import { useRouter } from "expo-router";
+import { ScrollView, BackHandler, Alert } from "react-native";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import FormHeader from "../../components/form/FormHeader";
 
 import maskDataNasc from "../../utilities/masks/maskDataNasc";
@@ -116,10 +116,17 @@ export default function FormUsuario({
     handleSubmit,
     control,
     setValue,
+    reset,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(registerSchema),
-    defaultValues: async () => {
+    resolver: yupResolver(registerSchema)
+  });
+
+  const [dadosCarregados, setDadosCarregados] = useState(false);
+  const [dadosFormulario, setDadosFormulario] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
       if (abrirForm) {
         setSpinner(true);
         const token = await AsyncStorage.getItem("token");
@@ -155,13 +162,24 @@ export default function FormUsuario({
         setTxtBotao("Atualizar formulário");
         setDadosCarregados(true);
         setSpinner(false);
-
-        return data;
+        setDadosFormulario(data);
       }
-    },
-  });
+    }
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (dadosCarregados) {
+      reset(dadosFormulario);
+    }
+  }, [dadosCarregados, dadosFormulario]);
 
   const router = useRouter();
+  const { formularioPendente } = useLocalSearchParams<{
+    formularioPendente: boolean | any
+  }>();
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -187,6 +205,28 @@ export default function FormUsuario({
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const backAction = () => {
+      if (formularioPendente) {
+        Alert.alert('Atenção', 'Preencha o formulário inicial antes de prosseguir', [
+          {
+            text: 'Ok',
+            onPress: () => null,
+            style: 'cancel',
+          },
+        ]);
+        return true;
+      }
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
   const onSubmit = async (formData: any) => {
     setSpinner(true);
 
@@ -210,7 +250,7 @@ export default function FormUsuario({
           await Location.requestForegroundPermissionsAsync();
         }
 
-        if(abrirForm){
+        if (abrirForm) {
           router.push({
             pathname: id_contato ? 'contatos' : 'profile',
             params: {
@@ -218,7 +258,7 @@ export default function FormUsuario({
               action: 'success',
             },
           });
-        }else{
+        } else {
           router.push({
             pathname: 'contatos',
             params: {
@@ -261,7 +301,6 @@ export default function FormUsuario({
   const [lblComorbidade, setlblComorbidade] = useState("");
   const [txtBotao, setTxtBotao] = useState("Criar formulário");
 
-  const [dadosCarregados, setDadosCarregados] = useState(false);
   const RenderizarFormulario = (abrirForm && dadosCarregados) || !abrirForm;
 
   return (
