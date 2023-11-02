@@ -84,7 +84,7 @@ export default function FormUsuario({
     bairro: yup.string().required("O bairro é obrigatório"),
     complemento: yup.string().optional(),
     id_plano: yup.string().required("Selecione um plano"),
-    ds_plano: yup.string().when("plano", {
+    ds_plano: yup.string().when("id_plano", {
       is: "8",
       then: (schema) => schema.required("Digite um plano"),
     }),
@@ -94,7 +94,7 @@ export default function FormUsuario({
       then: (schema) => schema.required("Digite a alergia"),
     }),
     med_cont: yup.string().required("Selecione se toma algum medicamento"),
-    ds_med_cont: yup.string().when("medicamento", {
+    ds_med_cont: yup.string().when("med_cont", {
       is: "S",
       then: (schema) => schema.required("Digite o medicamento"),
     }),
@@ -104,7 +104,7 @@ export default function FormUsuario({
       then: (schema) => schema.required("Digite a cirurgia"),
     }),
     id_comorbidade: yup.string().required("Comorbidade é obrigatória"),
-    ds_comorbidade: yup.string().when("comorbidade", {
+    ds_comorbidade: yup.string().when("id_comorbidade", {
       is: "21",
       then: (schema) => schema.required("Digite a comorbidade"),
     }),
@@ -779,9 +779,7 @@ export default function FormUsuario({
                         <HStack space="2xl">
                           <Radio
                             value="S"
-                            onFocus={(e) => {
-                              setMostraTextareaAlergia(false);
-                            }}
+                            onFocus={() => setMostraTextareaAlergia(false)}
                           >
                             <RadioIndicator mr="$2">
                               <RadioIcon as={CircleIcon} />
