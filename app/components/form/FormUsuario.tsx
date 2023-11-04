@@ -53,7 +53,7 @@ import ISelectProps from "../../utilities/interfaces/ISelectProps";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../api/axios";
 import * as Location from "expo-location";
-import Toast from 'react-native-toast-message';
+import Toast from "react-native-toast-message";
 
 export default function FormUsuario({
   abrirForm,
@@ -119,7 +119,7 @@ export default function FormUsuario({
     reset,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(registerSchema)
+    resolver: yupResolver(registerSchema),
   });
 
   const [dadosCarregados, setDadosCarregados] = useState(false);
@@ -177,9 +177,8 @@ export default function FormUsuario({
 
   const router = useRouter();
   const { formularioPendente } = useLocalSearchParams<{
-    formularioPendente: boolean | any
+    formularioPendente: boolean | any;
   }>();
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -208,20 +207,24 @@ export default function FormUsuario({
   useEffect(() => {
     const backAction = () => {
       if (formularioPendente) {
-        Alert.alert('Atenção', 'Preencha o formulário inicial antes de prosseguir', [
-          {
-            text: 'Ok',
-            onPress: () => null,
-            style: 'cancel',
-          },
-        ]);
+        Alert.alert(
+          "Atenção",
+          "Preencha o formulário inicial antes de prosseguir",
+          [
+            {
+              text: "Ok",
+              onPress: () => null,
+              style: "cancel",
+            },
+          ]
+        );
         return true;
       }
     };
 
     const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
+      "hardwareBackPress",
+      backAction
     );
 
     return () => backHandler.remove();
@@ -252,31 +255,30 @@ export default function FormUsuario({
 
         if (abrirForm) {
           router.push({
-            pathname: id_contato ? 'contatos' : 'profile',
+            pathname: id_contato ? "contatos" : "profile",
             params: {
-              msg: 'Fomulário atualizado com sucesso',
-              action: 'success',
+              msg: "Fomulário atualizado com sucesso",
+              action: "success",
             },
           });
         } else {
           router.push({
-            pathname: 'contatos',
+            pathname: "contatos",
             params: {
-              msg: 'Formulário criado com sucesso',
-              action: 'success',
+              msg: "Formulário criado com sucesso",
+              action: "success",
             },
           });
         }
-
       } else {
         Toast.show({
           type: "error",
-          text1: data.error
+          text1: data.error,
         });
       }
     } catch (error) {
       console.error("Erro ao buscar dados das APIs:", error);
-    } finally{
+    } finally {
       setSpinner(false);
     }
   };
@@ -305,8 +307,10 @@ export default function FormUsuario({
 
   return (
     <ScrollView>
-      <FormHeader title={tituloForm} titleSize={'2xl'}/>
-      {spinner ? <Spinner size='large' marginTop='50%' /> : 
+      <FormHeader title={tituloForm} titleSize={"2xl"} />
+      {spinner ? (
+        <Spinner size="large" marginTop="50%" />
+      ) : (
         <VStack
           space="lg"
           h={"$full"}
@@ -315,7 +319,6 @@ export default function FormUsuario({
           p={15}
           bgColor="white"
         >
-
           {RenderizarFormulario && formContato ? (
             <Box>
               <Box>
@@ -732,7 +735,9 @@ export default function FormUsuario({
               <Box>
                 <FormControl
                   isRequired={!mostraInputPlano}
-                  isInvalid={!mostraInputPlano ? "ds_plano" in errors : undefined}
+                  isInvalid={
+                    !mostraInputPlano ? "ds_plano" in errors : undefined
+                  }
                 >
                   <FormControlLabel>
                     <FormControlLabelText>
@@ -775,25 +780,27 @@ export default function FormUsuario({
                     name="alergia"
                     defaultValue={""}
                     render={({ field: { onChange, value } }) => (
-                      <RadioGroup onChange={onChange} value={value}>
+                      <RadioGroup
+                        onChange={(v) => {
+                          onChange(v);
+                          if (v == "S") {
+                            setMostraTextareaAlergia(false);
+                          } else {
+                            setMostraTextareaAlergia(true);
+                            setDsAlergiaValue("");
+                            setValue("ds_alergia", "");
+                          }
+                        }}
+                        value={value}
+                      >
                         <HStack space="2xl">
-                          <Radio
-                            value="S"
-                            onFocus={() => setMostraTextareaAlergia(false)}
-                          >
+                          <Radio value="S">
                             <RadioIndicator mr="$2">
                               <RadioIcon as={CircleIcon} />
                             </RadioIndicator>
                             <RadioLabel>Sim</RadioLabel>
                           </Radio>
-                          <Radio
-                            value="N"
-                            onFocus={() => {
-                              setMostraTextareaAlergia(true);
-                              setDsAlergiaValue("");
-                              setValue("ds_alergia", "");
-                            }}
-                          >
+                          <Radio value="N">
                             <RadioIndicator mr="$2">
                               <RadioIcon as={CircleIcon} />
                             </RadioIndicator>
@@ -863,25 +870,27 @@ export default function FormUsuario({
                     name="med_cont"
                     defaultValue={""}
                     render={({ field: { onChange, value } }) => (
-                      <RadioGroup onChange={onChange} value={value}>
+                      <RadioGroup
+                        onChange={(v) => {
+                          onChange(v);
+                          if (v === "S") {
+                            setMostraTextareaMed(false);
+                          } else {
+                            setMostraTextareaMed(true);
+                            setDsMedicamentoValue("");
+                            setValue("ds_med_cont", "");
+                          }
+                        }}
+                        value={value}
+                      >
                         <HStack space="2xl">
-                          <Radio
-                            value="S"
-                            onFocus={() => setMostraTextareaMed(false)}
-                          >
+                          <Radio value="S">
                             <RadioIndicator mr="$2">
                               <RadioIcon as={CircleIcon} />
                             </RadioIndicator>
                             <RadioLabel>Sim</RadioLabel>
                           </Radio>
-                          <Radio
-                            value="N"
-                            onFocus={() => {
-                              setMostraTextareaMed(true);
-                              setDsMedicamentoValue("");
-                              setValue("ds_med_cont", "");
-                            }}
-                          >
+                          <Radio value="N">
                             <RadioIndicator mr="$2">
                               <RadioIcon as={CircleIcon} />
                             </RadioIndicator>
@@ -951,27 +960,27 @@ export default function FormUsuario({
                     name="cirurgia"
                     defaultValue={""}
                     render={({ field: { onChange, value } }) => (
-                      <RadioGroup onChange={onChange} value={value}>
+                      <RadioGroup
+                        onChange={(v) => {
+                          onChange(v);
+                          if (v === "S") {
+                            setMostraTextareaCirurgia(false);
+                          } else {
+                            setMostraTextareaCirurgia(true);
+                            setDsCirurgiaValue("");
+                            setValue("ds_cirurgia", "");
+                          }
+                        }}
+                        value={value}
+                      >
                         <HStack space="2xl">
-                          <Radio
-                            value="S"
-                            onFocus={() => {
-                              setMostraTextareaCirurgia(false);
-                            }}
-                          >
+                          <Radio value="S">
                             <RadioIndicator mr="$2">
                               <RadioIcon as={CircleIcon} />
                             </RadioIndicator>
                             <RadioLabel>Sim</RadioLabel>
                           </Radio>
-                          <Radio
-                            value="N"
-                            onFocus={() => {
-                              setMostraTextareaCirurgia(true);
-                              setDsCirurgiaValue("");
-                              setValue("ds_cirurgia", "");
-                            }}
-                          >
+                          <Radio value="N">
                             <RadioIndicator mr="$2">
                               <RadioIcon as={CircleIcon} />
                             </RadioIndicator>
@@ -994,7 +1003,9 @@ export default function FormUsuario({
                 <FormControl
                   isRequired={!mostraTextareaCirurgia}
                   isInvalid={
-                    !mostraTextareaCirurgia ? "ds_cirurgia" in errors : undefined
+                    !mostraTextareaCirurgia
+                      ? "ds_cirurgia" in errors
+                      : undefined
                   }
                 >
                   <FormControlLabel>
@@ -1087,7 +1098,9 @@ export default function FormUsuario({
                 <FormControl
                   isRequired={!mostraTextareaComorb}
                   isInvalid={
-                    !mostraTextareaComorb ? "ds_comorbidade" in errors : undefined
+                    !mostraTextareaComorb
+                      ? "ds_comorbidade" in errors
+                      : undefined
                   }
                 >
                   <FormControlLabel>
@@ -1129,7 +1142,7 @@ export default function FormUsuario({
             </Box>
           ) : null}
         </VStack>
-      }
+      )}
     </ScrollView>
   );
 }
