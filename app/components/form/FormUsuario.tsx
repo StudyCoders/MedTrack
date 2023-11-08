@@ -412,7 +412,7 @@ export default function FormUsuario({
               <Box>
                 <FormControl isRequired isInvalid={"tp_sexo" in errors}>
                   <FormControlLabel>
-                    <FormControlLabelText>Gênero</FormControlLabelText>
+                    <FormControlLabelText>Sexo</FormControlLabelText>
                   </FormControlLabel>
                   <Controller
                     control={control}
@@ -771,7 +771,7 @@ export default function FormUsuario({
                 <FormControl isRequired isInvalid={"alergia" in errors}>
                   <FormControlLabel>
                     <FormControlLabelText>
-                      Pussui algum tipo de alergia?
+                      Possui algum tipo de alergia?
                     </FormControlLabelText>
                   </FormControlLabel>
 
