@@ -412,7 +412,7 @@ export default function FormUsuario({
               <Box>
                 <FormControl isRequired isInvalid={"tp_sexo" in errors}>
                   <FormControlLabel>
-                    <FormControlLabelText>Sexo</FormControlLabelText>
+                    <FormControlLabelText>Gênero</FormControlLabelText>
                   </FormControlLabel>
                   <Controller
                     control={control}
@@ -516,10 +516,12 @@ export default function FormUsuario({
                         </SelectTrigger>
                         <SelectPortal>
                           <SelectContent>
-                            <SelectDragIndicatorWrapper>
-                              <SelectDragIndicator />
-                            </SelectDragIndicatorWrapper>
-                            <SelectItem label="SÃO PAULO" value="SP" />
+                            <ScrollView>
+                              <SelectDragIndicatorWrapper>
+                                <SelectDragIndicator />
+                              </SelectDragIndicatorWrapper>
+                              <SelectItem label="SÃO PAULO" value="SP" />
+                            </ScrollView>
                           </SelectContent>
                         </SelectPortal>
                       </Select>
@@ -557,16 +559,18 @@ export default function FormUsuario({
                         </SelectTrigger>
                         <SelectPortal>
                           <SelectContent>
-                            <SelectDragIndicatorWrapper>
-                              <SelectDragIndicator />
-                            </SelectDragIndicatorWrapper>
-                            {cidades.map((option, index) => (
-                              <SelectItem
-                                key={index}
-                                label={option.label}
-                                value={option.value}
-                              />
-                            ))}
+                            <ScrollView>
+                              <SelectDragIndicatorWrapper>
+                                <SelectDragIndicator />
+                              </SelectDragIndicatorWrapper>
+                              {cidades.map((option, index) => (
+                                <SelectItem
+                                  key={index}
+                                  label={option.label}
+                                  value={option.value}
+                                />
+                              ))}
+                            </ScrollView>
                           </SelectContent>
                         </SelectPortal>
                       </Select>
@@ -771,7 +775,7 @@ export default function FormUsuario({
                 <FormControl isRequired isInvalid={"alergia" in errors}>
                   <FormControlLabel>
                     <FormControlLabelText>
-                      Possui algum tipo de alergia?
+                      Pussui algum tipo de alergia?
                     </FormControlLabelText>
                   </FormControlLabel>
 
@@ -1070,16 +1074,18 @@ export default function FormUsuario({
                         </SelectTrigger>
                         <SelectPortal>
                           <SelectContent>
-                            <SelectDragIndicatorWrapper>
-                              <SelectDragIndicator />
-                            </SelectDragIndicatorWrapper>
-                            {comorbidades.map((option, index) => (
-                              <SelectItem
-                                key={index}
-                                label={option.label}
-                                value={option.value}
-                              />
-                            ))}
+                            <ScrollView>
+                              <SelectDragIndicatorWrapper>
+                                <SelectDragIndicator />
+                              </SelectDragIndicatorWrapper>
+                              {comorbidades.map((option, index) => (
+                                <SelectItem
+                                  key={index}
+                                  label={option.label}
+                                  value={option.value}
+                                />
+                              ))}
+                            </ScrollView>
                           </SelectContent>
                         </SelectPortal>
                       </Select>

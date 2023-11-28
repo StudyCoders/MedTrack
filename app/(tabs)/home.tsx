@@ -94,7 +94,7 @@ export default function Home() {
 
   return (
     <VStack flex={1} justifyContent="space-between" onLayout={onLayoutRootView}>
-      <Text textAlign="center" fontFamily="Orbitron_500Medium" fontSize={"$5xl"} p={"$12"}>
+      <Text textAlign="center" fontFamily="Orbitron_500Medium" fontSize={'$4xl'} p={"$11"}>
         QuickSafe
       </Text>
       <Center>
